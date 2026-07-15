@@ -1,0 +1,65 @@
+{
+  "module": "ecosystem_core_cycles",
+  "version": "1.0.1",
+  "description": "Defines repeating operational cycles for stability, integrity, protocol alignment, and authority synchronization.",
+  "cycles": {
+    "stability_cycle": {
+      "interval_seconds": 60,
+      "task": "run_stability_check",
+      "requires_integrity": true,
+      "priority": "high",
+      "jitter_seconds": 5,
+      "log": true
+    },
+    "integrity_cycle": {
+      "interval_seconds": 120,
+      "task": "run_integrity_validation",
+      "checksum_required": true,
+      "priority": "highest",
+      "jitter_seconds": 10,
+      "log": true
+    },
+    "protocol_alignment_cycle": {
+      "interval_seconds": 90,
+      "task": "validate_protocol_alignment",
+      "requires_sync": true,
+      "priority": "medium",
+      "jitter_seconds": 5,
+      "log": true
+    },
+    "authority_sync_cycle": {
+      "interval_seconds": 180,
+      "task": "sync_authority_levels",
+      "requires_chain_of_command": true,
+      "priority": "medium",
+      "jitter_seconds": 15,
+      "log": true
+    },
+    "communication_cycle": {
+      "interval_seconds": 45,
+      "task": "verify_communication_channels",
+      "requires_channel_integrity": true,
+      "priority": "low",
+      "jitter_seconds": 5,
+      "log": false
+    }
+  },
+  "dependencies": {
+    "stability_cycle": ["integrity_cycle"],
+    "protocol_alignment_cycle": ["stability_cycle"],
+    "authority_sync_cycle": ["protocol_alignment_cycle"]
+  },
+  "safety": {
+    "halt_on_cycle_failure": false,
+    "auto_recover_failed_cycle": true,
+    "max_recovery_attempts": 3,
+    "cooldown_seconds": 30,
+    "escalate_to_admiral_after_max_retries": true
+  },
+  "logging": {
+    "log_all_cycles": false,
+    "log_failures": true,
+    "log_recoveries": true,
+    "log_on_degraded": true
+  }
+}
