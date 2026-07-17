@@ -1,0 +1,101 @@
+{
+  "module": "ecosystem_agent_registry",
+  "version": "1.6.3",
+  "codename": "pro16v3erbs",
+  "description": "Central registry of all agents in the ecosystem, including identity, rank, paths, and operational status.",
+  "last_updated": "2026-05-13",
+  "agents": [
+    {
+      "id": "adm_ewitz",
+      "class": "Admiral",
+      "rank": 10,
+      "tier": "root",
+      "folder": "adm_ewitz",
+      "entry_file": "admiral.py",
+      "identity_file": "identity.json",
+      "behavior_file": "behavior.json",
+      "personality_file": "personality.json",
+      "commands_file": "commands.json",
+      "role_file": "role.json",
+      "status": "active",
+      "auto_load": true,
+      "boot_order": 1,
+      "critical": true
+    },
+    {
+      "id": "cpt_eco",
+      "class": "Captain",
+      "rank": 9.5,
+      "tier": "operational_command",
+      "folder": "cpt_eco",
+      "entry_file": "cpt_eco.py",
+      "identity_file": "identity.json",
+      "behavior_file": "behavior.json",
+      "personality_file": "personality.json",
+      "commands_file": "commands.json",
+      "role_file": "role.json",
+      "governance_file": "governance/governance.json",
+      "authority_file": "authority/authority.json",
+      "status": "active",
+      "auto_load": true,
+      "boot_order": 2,
+      "critical": true
+    },
+    {
+      "id": "cmdr_max80",
+      "class": "Commander",
+      "rank": 9,
+      "tier": "tactical_execution",
+      "folder": "cmdr_max80",
+      "entry_file": "max80.py",
+      "identity_file": "DNA.json",
+      "behavior_file": "behavior.json",
+      "personality_file": "personality.json",
+      "commands_file": "commands.json",
+      "role_file": "role.json",
+      "status": "active",
+      "auto_load": true,
+      "boot_order": 3,
+      "critical": true
+    }
+  ],
+  "rules": {
+    "require_identity_file": true,
+    "require_behavior_file": true,
+    "require_personality_file": true,
+    "require_commands_file": true,
+    "require_role_file": true,
+    "require_entry_file": true,
+    "auto_load_agents": true,
+    "log_agent_registration": true,
+    "strict_rank_validation": true,
+    "enforce_boot_order": true,
+    "halt_if_critical_missing": true,
+    "validate_paths_on_register": true
+  },
+  "paths": {
+    "root": "./",
+    "authority": "cpt_eco/authority/",
+    "protocols": "protocols/",
+    "governance": "cpt_eco/governance/",
+    "ecosystem_core": "ecosystem_core/",
+    "logs": "logs/",
+    "adm_ewitz": "adm_ewitz/",
+    "cpt_eco": "cpt_eco/",
+    "cmdr_max80": "cmdr_max80/"
+  },
+  "boot_sequence": {
+    "order": ["adm_ewitz", "cpt_eco", "cmdr_max80"],
+    "require_all_critical": true,
+    "timeout_per_agent_seconds": 30,
+    "retry_failed": true,
+    "max_retries": 2
+  },
+  "validation": {
+    "expected_count": 3,
+    "min_rank": 9,
+    "max_rank": 10,
+    "allow_duplicate_ranks": false,
+    "require_unique_folders": true
+  }
+}

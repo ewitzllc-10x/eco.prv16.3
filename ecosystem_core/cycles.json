@@ -1,65 +1,153 @@
 {
-  "module": "ecosystem_core_cycles",
-  "version": "1.0.1",
-  "description": "Defines repeating operational cycles for stability, integrity, protocol alignment, and authority synchronization.",
-  "cycles": {
-    "stability_cycle": {
-      "interval_seconds": 60,
-      "task": "run_stability_check",
-      "requires_integrity": true,
-      "priority": "high",
-      "jitter_seconds": 5,
-      "log": true
-    },
-    "integrity_cycle": {
-      "interval_seconds": 120,
-      "task": "run_integrity_validation",
-      "checksum_required": true,
-      "priority": "highest",
-      "jitter_seconds": 10,
-      "log": true
-    },
-    "protocol_alignment_cycle": {
-      "interval_seconds": 90,
-      "task": "validate_protocol_alignment",
-      "requires_sync": true,
-      "priority": "medium",
-      "jitter_seconds": 5,
-      "log": true
-    },
-    "authority_sync_cycle": {
-      "interval_seconds": 180,
-      "task": "sync_authority_levels",
-      "requires_chain_of_command": true,
-      "priority": "medium",
-      "jitter_seconds": 15,
-      "log": true
-    },
-    "communication_cycle": {
-      "interval_seconds": 45,
-      "task": "verify_communication_channels",
-      "requires_channel_integrity": true,
-      "priority": "low",
-      "jitter_seconds": 5,
-      "log": false
+  "module": "ecosystem_cycles",
+  "version": "1.6.3",
+  "codename": "pro16v3erbs",
+  "description": "Cycles v1.6.3 - 4-agent business heartbeat: adm(10) -> max80(9.5) -> cpt(9) -> 1lt(8)",
+
+  "chain": {
+    "expected_agents": 4,
+    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "ranks": {
+      "adm_ewitz": 10,
+      "cmdr_max80": 9.5,
+      "cpt_eco": 9,
+      "1lt_act": 8
     }
   },
-  "dependencies": {
-    "stability_cycle": ["integrity_cycle"],
-    "protocol_alignment_cycle": ["stability_cycle"],
-    "authority_sync_cycle": ["protocol_alignment_cycle"]
+
+  "heartbeat": {
+    "enabled": true,
+    "interval_ms": 1000,
+    "protocol": "cycles.heartbeat",
+    "description": "Primary ecosystem heartbeat every 1s",
+    "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "require_all_4": true
   },
-  "safety": {
-    "halt_on_cycle_failure": false,
-    "auto_recover_failed_cycle": true,
-    "max_recovery_attempts": 3,
-    "cooldown_seconds": 30,
-    "escalate_to_admiral_after_max_retries": true
+
+  "timing": {
+    "sync_interval_ms": 5000,
+    "stability_check_interval_ms": 8000,
+    "readiness_check_interval_ms": 10000,
+    "communication_check_interval_ms": 3000,
+    "agent_health_check_ms": 2000,
+    "rank_chain_check_ms": 5000,
+    "description": "Timing for v1.6.3 4-agent chain"
   },
-  "logging": {
-    "log_all_cycles": false,
-    "log_failures": true,
-    "log_recoveries": true,
-    "log_on_degraded": true
+
+  "rhythms": {
+    "core_sync": {
+      "enabled": true,
+      "protocol": "core.sync",
+      "interval_ms": 5000,
+      "description": "Ecosystem sync"
+    },
+    "stability_rhythm": {
+      "enabled": true,
+      "protocol": "stability.check",
+      "interval_ms": 8000,
+      "description": "Stability verification"
+    },
+    "readiness_rhythm": {
+      "enabled": true,
+      "protocol": "readiness.check",
+      "interval_ms": 10000,
+      "description": "Readiness verification"
+    },
+    "agent_health_rhythm": {
+      "enabled": true,
+      "protocol": "core.load_agents",
+      "interval_ms": 2000,
+      "description": "Check all 4 agents alive",
+      "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "fail_if_missing": true
+    },
+    "command_chain_rhythm": {
+      "enabled": true,
+      "protocol": "router.route",
+      "interval_ms": 3000,
+      "description": "Verify command chain 10->9.5->9->8 intact",
+      "chain": "adm_ewitz -> cmdr_max80 -> cpt_eco -> 1lt_act"
+    },
+    "ops_rhythms": {
+      "strategy": {
+        "enabled": true,
+        "protocol": "ops.strategy",
+        "interval_ms": 15000,
+        "destination": "cmdr_max80",
+        "rank": 9.5
+      },
+      "construction": {
+        "enabled": true,
+        "protocol": "ops.construction",
+        "interval_ms": 10000,
+        "destination": "cpt_eco",
+        "rank": 9
+      },
+      "maintenance": {
+        "enabled": true,
+        "protocol": "ops.maintenance",
+        "interval_ms": 5000,
+        "destination": "1lt_act",
+        "rank": 8
+      },
+      "monitoring": {
+        "enabled": true,
+        "protocol": "ops.monitoring",
+        "interval_ms": 3000,
+        "destination": "1lt_act",
+        "rank": 8
+      }
+    }
+  },
+
+  "flow": {
+    "use_communication_channels": true,
+    "heartbeat_channel": "heartbeat",
+    "core_channel": "internal",
+    "agent_channel": "agent_to_core",
+    "command_channel": "command_chain",
+    "report_channel": "report_chain",
+    "description": "Uses v1.6.3 4-channel flow"
+  },
+
+  "rules": {
+    "require_heartbeat": true,
+    "require_sync_rhythm": true,
+    "require_stability_rhythm": true,
+    "require_readiness_rhythm": true,
+    "require_agent_health_rhythm": true,
+    "require_command_chain_rhythm": true,
+    "require_4_agents": true,
+    "log_all_cycles": true,
+    "halt_on_cycle_failure": true,
+    "halt_if_chain_broken": true
+  },
+
+  "failure": {
+    "on_agent_down": "notify_adm_and_cmdr",
+    "on_chain_break": "halt_and_report",
+    "notify": ["adm_ewitz", "cmdr_max80"],
+    "fallback": "stability.check"
+  },
+
+  "links": {
+    "ecosystem_core": "./ecosystem_core.json",
+    "communication_flow": "communication_flow.json",
+    "protocol_map": "../protocols/protocol_map.json",
+    "stability": "stability.json",
+    "readiness": "readiness.json",
+    "agent_registry": "agent_registry.json",
+    "authority": "authority.json",
+    "hierarchy": "hierarchy.json"
+  },
+
+  "integrity": {
+    "validate_heartbeat": true,
+    "validate_rhythms": true,
+    "validate_links": true,
+    "validate_chain": true,
+    "log_integrity_checks": true,
+    "version": "1.6.3",
+    "expected_agents": 4
   }
 }

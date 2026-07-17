@@ -1,0 +1,47 @@
+{
+  "module": "ecosystem_core",
+  "version": "1.0.1",
+  "description": "Master definition of the ecosystem core, linking identity, hierarchy, communication, stability, readiness, and cycles.",
+  "identity": {
+    "ecosystem_name": "cmdr_max80",
+    "branch": "pro16v4erbs",
+    "designation": "Ecosystem Core Layer",
+    "created": "2026-07-15",
+    "status": "active"
+  },
+  "modules": {
+    "identity": "identity.json",
+    "hierarchy": "hierarchy.json",
+    "communication_flow": "communication_flow.json",
+    "cycles": "cycles.json",
+    "stability": "stability.json",
+    "readiness": "readiness.json"
+  },
+  "requirements": {
+    "identity_loaded": true,
+    "hierarchy_verified": true,
+    "communication_flow_active": true,
+    "stability_confirmed": true,
+    "readiness_confirmed": true,
+    "protocol_map_linked": true,
+    "authority_map_linked": true
+  },
+  "health": {
+    "core_integrity": "stable",
+    "last_check": "2026-07-15T00:00:00Z",
+    "auto_repair_enabled": true,
+    "monitoring_interval_seconds": 10
+  },
+  "links": {
+    "authority": "../authority/authority.json",
+    "protocols": "../protocols/protocol_map.json",
+    "hierarchy": "../hierarchy/hierarchy.json",
+    "behavior": "../behavior/behavior.json",
+    "commander": "../commander/commander.json",
+    "dna": "../dna/DNA.json",
+    "stability": "stability.json",
+    "readiness": "readiness.json",
+    "communication": "communication_flow.json"
+  },
+  "credit": "original by co-polite, improved for cmdr_max80"
+}

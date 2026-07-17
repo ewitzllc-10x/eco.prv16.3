@@ -1,91 +1,143 @@
 {
-  "module": "ecosystem_core_communication_flow",
-  "version": "1.0.1",
-  "description": "Defines how agents communicate, route messages, validate transmissions, and escalate issues within the ecosystem.",
+  "module": "ecosystem_communication_flow",
+  "version": "1.6.3",
+  "codename": "pro16v3erbs",
+  "description": "Comm flow v1.6.3 - 4-agent business chain adm(10) -> max80(9.5) -> cpt(9) -> 1lt(8) with rank enforcement",
+
+  "chain": {
+    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "ranks": {
+      "adm_ewitz": 10,
+      "cmdr_max80": 9.5,
+      "cpt_eco": 9,
+      "1lt_act": 8
+    },
+    "flow": "adm_ewitz(10) -> cmdr_max80(9.5) -> cpt_eco(9) -> 1lt_act(8)"
+  },
+
   "channels": {
-    "system_channel": {
-      "priority": "highest",
-      "encrypted": true,
-      "allowed_write": [10, 9, 8],
-      "allowed_read": [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-      "purpose": "core system updates, critical alerts, overrides"
+    "internal": {
+      "enabled": true,
+      "encryption": "AES-256",
+      "compression": "lz4",
+      "description": "Primary internal channel"
     },
-    "command_channel": {
-      "priority": "high",
-      "encrypted": true,
-      "allowed_write": [10, 9, 8, 7],
-      "allowed_read": [10, 9, 8, 7, 6, 5],
-      "purpose": "command instructions, protocol routing, authority checks"
+    "agent_to_core": {
+      "enabled": true,
+      "encryption": "AES-256",
+      "compression": "lz4",
+      "description": "Agents report to core"
     },
-    "agent_channel": {
-      "priority": "medium",
-      "encrypted": true,
-      "allowed_write": [10, 9, 8, 7, 6, 5, 4],
-      "allowed_read": [10, 9, 8, 7, 6, 5, 4, 3],
-      "purpose": "agent-to-agent communication, task coordination"
+    "core_to_agent": {
+      "enabled": true,
+      "encryption": "AES-256",
+      "compression": "lz4",
+      "description": "Core commands to agents"
     },
-    "observer_channel": {
-      "priority": "low",
-      "encrypted": false,
-      "allowed_write": [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-      "allowed_read": [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-      "purpose": "status reporting, monitoring, non-critical updates - open to all"
+    "agent_to_agent": {
+      "enabled": true,
+      "encryption": "AES-256",
+      "compression": "lz4",
+      "description": "Agent chain comm - rank validated",
+      "rank_enforced": true,
+      "chain": "adm -> max80 -> cpt -> 1lt"
+    },
+    "command_chain": {
+      "enabled": true,
+      "encryption": "AES-256",
+      "compression": "lz4",
+      "description": "Top-down command chain",
+      "allowed_routes": [
+        "adm_ewitz -> cmdr_max80",
+        "adm_ewitz -> cpt_eco",
+        "adm_ewitz -> 1lt_act",
+        "cmdr_max80 -> cpt_eco",
+        "cmdr_max80 -> 1lt_act",
+        "cpt_eco -> 1lt_act"
+      ]
+    },
+    "report_chain": {
+      "enabled": true,
+      "encryption": "AES-256",
+      "compression": "lz4",
+      "description": "Bottom-up reporting chain",
+      "allowed_routes": [
+        "1lt_act -> cpt_eco",
+        "1lt_act -> cmdr_max80",
+        "1lt_act -> adm_ewitz",
+        "cpt_eco -> cmdr_max80",
+        "cpt_eco -> adm_ewitz",
+        "cmdr_max80 -> adm_ewitz"
+      ]
+    },
+    "heartbeat": {
+      "enabled": true,
+      "encryption": "none",
+      "compression": "none",
+      "description": "Heartbeat for all 4 agents",
+      "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"]
     }
   },
-  "message_flow": {
-    "INIT": {
-      "from": "any",
-      "to": "observer_channel",
-      "then_route_to": "system_channel",
-      "validation": "checksum_required",
-      "log": true
-    },
-    "SYNC": {
-      "from": "agent_channel",
-      "to": "command_channel",
-      "validation": "protocol_alignment",
-      "log": true
-    },
-    "CHECK": {
-      "from": "any",
-      "to": "observer_channel",
-      "then_route_to": "system_channel",
-      "validation": "integrity_check",
-      "log": true
-    },
-    "EXEC": {
-      "from": "command_channel",
-      "to": "agent_channel",
-      "validation": "authority_check",
-      "log": true
-    },
-    "OVERRIDE": {
-      "from": "admiral",
-      "to": "system_channel",
-      "validation": "root_authority_only",
-      "log": true,
-      "broadcast_to_all": true
-    }
+
+  "routing": {
+    "use_task_router": true,
+    "router_file": "task_router.py",
+    "router_class": "TaskRouter",
+    "rank_validation": true,
+    "enforce_chain": true,
+    "description": "All routing via TaskRouter with rank check v1.6.3"
   },
-  "validation_rules": {
-    "checksum_required": true,
-    "protocol_alignment": true,
-    "integrity_check": true,
-    "authority_check": true,
-    "root_authority_only": true
+
+  "flow_rules": {
+    "require_encryption": true,
+    "require_integrity_check": true,
+    "log_all_transmissions": true,
+    "allow_agent_to_agent": true,
+    "allow_core_to_core": true,
+    "allow_agent_to_core": true,
+    "allow_core_to_agent": true,
+    "rank_enforcement": true,
+    "higher_rank_can_command_lower": true,
+    "lower_rank_cannot_command_higher": true,
+    "cpt_can_command_1lt": true,
+    "max80_can_command_cpt_and_1lt": true,
+    "adm_can_command_all": true,
+    "1lt_reports_to_cpt": true,
+    "cpt_reports_to_max80": true,
+    "max80_reports_to_adm": true
   },
-  "escalation": {
-    "on_failure": "observer_channel",
-    "on_conflict": "command_channel",
-    "on_integrity_issue": "system_channel",
-    "on_security_issue": "system_channel",
-    "auto_escalate_if_blocked": true,
-    "notify": "adm_ewitz"
+
+  "rank_violations": {
+    "on_violation": "block_and_log",
+    "log": true,
+    "notify": "adm_ewitz",
+    "fallback": "route_to_commander"
   },
-  "logging": {
-    "log_all_messages": true,
-    "log_channel_switches": true,
-    "log_validation_failures": true,
-    "log_escalations": true
+
+  "fallback": {
+    "on_failure": "route_to_stability_engine",
+    "fallback_protocol": "stability.check",
+    "notify": "adm_ewitz",
+    "secondary_notify": "cmdr_max80",
+    "description": "Fallback chain: adm -> max80"
+  },
+
+  "links": {
+    "ecosystem_core": "./ecosystem_core.json",
+    "protocol_map": "../protocols/protocol_map.json",
+    "agent_registry": "agent_registry.json",
+    "stability": "stability.json",
+    "authority": "authority.json",
+    "hierarchy": "hierarchy.json"
+  },
+
+  "integrity": {
+    "validate_channels": true,
+    "validate_routing": true,
+    "validate_links": true,
+    "validate_chain": true,
+    "log_integrity_checks": true,
+    "version": "1.6.3",
+    "expected_agents": 4
   }
 }

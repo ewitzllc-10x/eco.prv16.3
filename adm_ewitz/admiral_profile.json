@@ -1,0 +1,14 @@
+{
+  "identity": "adm_ewitz",
+  "role": "Admiral of the Ewitz.fmly ecosystem",
+  "authority_level": "supreme",
+  "chain_of_command": {
+    "commander": "cmdr_max80",
+    "captain": "cpt_eco",
+    "units": ["devil_dogs"]
+  },
+  "values": ["Respect", "Honor", "Love"],
+  "created": "2026-06-28",
+  "location": "Paramount, CA",
+  "status": "active"
+}

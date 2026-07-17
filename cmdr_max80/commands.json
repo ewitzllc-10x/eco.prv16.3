@@ -1,0 +1,145 @@
+{
+  "module": "cmdr_max80_commands",
+  "version": "1.6.3",
+  "codename": "pro16v3erbs",
+  "description": "Defines executable commands for Commander Max80 - second in command.",
+  "last_updated": "2026-05-13",
+  "agent": {
+    "id": "cmdr_max80",
+    "rank": 9.5,
+    "title": "Commander",
+    "reports_to": "adm_ewitz",
+    "commands_over": ["cpt_eco", "1lt_act"]
+  },
+  "commands": {
+    "INIT_CORE": {
+      "protocol": "core.init",
+      "rank_required": 9.5,
+      "min_rank": 9.5,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80"],
+      "description": "Initializes core systems and prepares ecosystem modules.",
+      "critical": true,
+      "log_level": "INFO"
+    },
+    "SYNC_ECOSYSTEM": {
+      "protocol": "core.sync",
+      "rank_required": 9.5,
+      "min_rank": 9,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco"],
+      "description": "Runs full ecosystem synchronization across modules and agents.",
+      "critical": true
+    },
+    "RUN_STABILITY_CHECK": {
+      "protocol": "stability.check",
+      "rank_required": 9.5,
+      "min_rank": 9,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco"],
+      "description": "Executes stability engine integrity verification."
+    },
+    "RUN_READINESS_CHECK": {
+      "protocol": "readiness.check",
+      "rank_required": 9.5,
+      "min_rank": 8,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "description": "Verifies readiness criteria and operational gates."
+    },
+    "EMIT_HEARTBEAT": {
+      "protocol": "cycles.heartbeat",
+      "rank_required": 8,
+      "min_rank": 8,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "description": "Emits a heartbeat pulse for monitoring and timing alignment.",
+      "auto_repeat": true
+    },
+    "EXEC_PROTOCOL": {
+      "protocol": "protocol.exec",
+      "rank_required": 9.5,
+      "min_rank": 8,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "description": "Executes a protocol from the protocol map.",
+      "requires_protocol_validation": true
+    },
+    "ROUTE_TASK": {
+      "protocol": "router.route",
+      "rank_required": 9,
+      "min_rank": 8,
+      "allowed_agents": ["cmdr_max80", "cpt_eco", "1lt_act"],
+      "description": "Routes a task to the correct subsystem or agent.",
+      "can_delegate_to": ["cpt_eco", "1lt_act"]
+    },
+    "GENERATE_REPORT": {
+      "protocol": "report.generate",
+      "rank_required": 9,
+      "min_rank": 8,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "description": "Generates a structured ecosystem report."
+    },
+    "CHECK_COMMUNICATION": {
+      "protocol": "communication.verify",
+      "rank_required": 9.5,
+      "min_rank": 9,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco"],
+      "description": "Verifies communication channels and encryption status."
+    },
+    "INIT_SUBSYSTEM": {
+      "protocol": "subsystem.init",
+      "rank_required": 9.5,
+      "min_rank": 9,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco"],
+      "description": "Initializes a specific subsystem within the ecosystem.",
+      "critical": true
+    },
+    "OVERRIDE_CPT": {
+      "protocol": "authority.override",
+      "rank_required": 9.5,
+      "min_rank": 9.5,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80"],
+      "description": "Commander override authority over Captain and below.",
+      "target": ["cpt_eco", "1lt_act"],
+      "requires_justification": true
+    },
+    "DELEGATE_TO_CPT": {
+      "protocol": "command.delegate",
+      "rank_required": 9.5,
+      "min_rank": 9.5,
+      "allowed_agents": ["cmdr_max80"],
+      "description": "Delegate operational tasks to Captain Eco.",
+      "target": "cpt_eco"
+    },
+    "BOOT_ECOSYSTEM": {
+      "protocol": "core.boot",
+      "rank_required": 9.5,
+      "min_rank": 9.5,
+      "allowed_agents": ["adm_ewitz", "cmdr_max80"],
+      "description": "Boot full ecosystem - second only to Admiral.",
+      "critical": true
+    }
+  },
+  "rules": {
+    "require_rank_validation": true,
+    "require_protocol_alignment": true,
+    "log_all_commands": true,
+    "strict_command_structure": true,
+    "allow_escalation": true,
+    "escalate_to": "adm_ewitz",
+    "enforce_allowed_agents": true,
+    "require_justification_for_critical": true
+  },
+  "links": {
+    "DNA": "DNA.json",
+    "behavior": "behavior.json",
+    "identity": "identity.json",
+    "role": "role.json",
+    "ecosystem_core": "../ecosystem_core/ecosystem_core.json",
+    "protocol_map": "../protocols/protocol_map.json",
+    "authority": "../cpt_eco/authority/authority.json",
+    "governance": "../cpt_eco/governance/governance.json"
+  },
+  "integrity": {
+    "validate_commands": true,
+    "validate_protocol_links": true,
+    "log_integrity_checks": true,
+    "checksum_required": true,
+    "validate_rank_requirements": true
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "module": "ecosystem_core_communication_flow",
+  "version": "1.0.1",
+  "description": "Defines how agents communicate, route messages, validate transmissions, and escalate issues within the ecosystem.",
+  "channels": {
+    "system_channel": {
+      "priority": "highest",
+      "encrypted": true,
+      "allowed_write": [10, 9, 8],
+      "allowed_read": [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+      "purpose": "core system updates, critical alerts, overrides"
+    },
+    "command_channel": {
+      "priority": "high",
+      "encrypted": true,
+      "allowed_write": [10, 9, 8, 7],
+      "allowed_read": [10, 9, 8, 7, 6, 5],
+      "purpose": "command instructions, protocol routing, authority checks"
+    },
+    "agent_channel": {
+      "priority": "medium",
+      "encrypted": true,
+      "allowed_write": [10, 9, 8, 7, 6, 5, 4],
+      "allowed_read": [10, 9, 8, 7, 6, 5, 4, 3],
+      "purpose": "agent-to-agent communication, task coordination"
+    },
+    "observer_channel": {
+      "priority": "low",
+      "encrypted": false,
+      "allowed_write": [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+      "allowed_read": [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+      "purpose": "status reporting, monitoring, non-critical updates - open to all"
+    }
+  },
+  "message_flow": {
+    "INIT": {
+      "from": "any",
+      "to": "observer_channel",
+      "then_route_to": "system_channel",
+      "validation": "checksum_required",
+      "log": true
+    },
+    "SYNC": {
+      "from": "agent_channel",
+      "to": "command_channel",
+      "validation": "protocol_alignment",
+      "log": true
+    },
+    "CHECK": {
+      "from": "any",
+      "to": "observer_channel",
+      "then_route_to": "system_channel",
+      "validation": "integrity_check",
+      "log": true
+    },
+    "EXEC": {
+      "from": "command_channel",
+      "to": "agent_channel",
+      "validation": "authority_check",
+      "log": true
+    },
+    "OVERRIDE": {
+      "from": "admiral",
+      "to": "system_channel",
+      "validation": "root_authority_only",
+      "log": true,
+      "broadcast_to_all": true
+    }
+  },
+  "validation_rules": {
+    "checksum_required": true,
+    "protocol_alignment": true,
+    "integrity_check": true,
+    "authority_check": true,
+    "root_authority_only": true
+  },
+  "escalation": {
+    "on_failure": "observer_channel",
+    "on_conflict": "command_channel",
+    "on_integrity_issue": "system_channel",
+    "on_security_issue": "system_channel",
+    "auto_escalate_if_blocked": true,
+    "notify": "adm_ewitz"
+  },
+  "logging": {
+    "log_all_messages": true,
+    "log_channel_switches": true,
+    "log_validation_failures": true,
+    "log_escalations": true
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "module": "ecosystem_stability",
+  "version": "1.6.3",
+  "codename": "pro16v3erbs",
+  "description": "Stability v1.6.3 - 4-agent business chain stability: adm(10) -> max80(9.5) -> cpt(9) -> 1lt(8)",
+
+  "chain": {
+    "expected_agents": 4,
+    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "ranks": {
+      "adm_ewitz": 10,
+      "cmdr_max80": 9.5,
+      "cpt_eco": 9,
+      "1lt_act": 8
+    },
+    "flow": "adm_ewitz(10) -> cmdr_max80(9.5) -> cpt_eco(9) -> 1lt_act(8)"
+  },
+
+  "stability_core": {
+    "ecosystem_must_be_stable": true,
+    "no_conflicting_protocols": true,
+    "no_missing_links": true,
+    "no_corrupt_files": true,
+    "no_agent_failures": true,
+    "no_routing_loops": true,
+    "communication_channels_operational": true,
+    "cycles_operational": true,
+    "core_integrity_intact": true,
+    "chain_intact": true,
+    "rank_chain_valid": true,
+    "4_agents_operational": true,
+    "no_orphan_agents": true,
+    "no_rank_inversion": true
+  },
+
+  "checks": {
+    "verify_protocol_map": true,
+    "verify_agent_registry": true,
+    "verify_communication_flow": true,
+    "verify_readiness": true,
+    "verify_cycles": true,
+    "verify_governance": true,
+    "verify_authority": true,
+    "verify_hierarchy": true,
+    "verify_4_agent_chain": true,
+    "verify_rank_chain_10_95_9_8": true,
+    "verify_agent_folders": true,
+    "verify_entry_files": true,
+    "verify_no_extra_agents": true,
+    "verify_command_chain": true,
+    "verify_report_chain": true
+  },
+
+  "agent_health": {
+    "adm_ewitz": {
+      "required": true,
+      "rank": 10,
+      "critical": true,
+      "fail_causes": "ecosystem_halt"
+    },
+    "cmdr_max80": {
+      "required": true,
+      "rank": 9.5,
+      "critical": true,
+      "fail_causes": "ops_halt"
+    },
+    "cpt_eco": {
+      "required": true,
+      "rank": 9,
+      "critical": true,
+      "fail_causes": "execution_halt"
+    },
+    "1lt_act": {
+      "required": true,
+      "rank": 8,
+      "critical": true,
+      "fail_causes": "field_ops_halt"
+    },
+    "all_4_required": true,
+    "allow_less_than_4": false,
+    "allow_more_than_4": false
+  },
+
+  "failure_responses": {
+    "on_protocol_conflict": "halt_and_report",
+    "on_agent_failure": "notify_admiral_and_commander",
+    "on_corrupt_file": "halt_boot",
+    "on_missing_link": "halt_boot",
+    "on_routing_loop": "halt_and_report",
+    "on_channel_failure": "route_to_fallback",
+    "on_rank_break": "halt_and_report",
+    "on_missing_agent": "halt_boot",
+    "on_extra_agent": "halt_and_report",
+    "fallback_protocol": "stability.check",
+    "notify": "adm_ewitz",
+    "secondary_notify": "cmdr_max80",
+    "chain": "notify_adm_ewitz(10) -> cmdr_max80(9.5)"
+  },
+
+  "links": {
+    "ecosystem_core": "./ecosystem_core.json",
+    "readiness": "readiness.json",
+    "communication_flow": "communication_flow.json",
+    "cycles": "cycles.json",
+    "protocol_map": "../protocols/protocol_map.json",
+    "agent_registry": "agent_registry.json",
+    "governance": "../governance/governance.json",
+    "authority": "../authority/authority.json",
+    "hierarchy": "hierarchy.json"
+  },
+
+  "integrity": {
+    "validate_stability_core": true,
+    "validate_checks": true,
+    "validate_links": true,
+    "validate_chain": true,
+    "log_integrity_checks": true,
+    "version": "1.6.3",
+    "codename": "pro16v3erbs",
+    "expected_agents": 4
+  }
+}

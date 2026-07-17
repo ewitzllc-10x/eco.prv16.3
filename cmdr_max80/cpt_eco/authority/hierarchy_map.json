@@ -1,0 +1,95 @@
+{
+  "module": "cpt_eco_hierarchy_map",
+  "version": "1.0.1",
+  "description": "Defines the full command hierarchy and relational structure between ecosystem roles.",
+  "root": {
+    "rank": 10,
+    "title": "Admiral",
+    "id": "adm_ewitz",
+    "can_override_all": true,
+    "reports_to": null
+  },
+  "hierarchy": [
+    {
+      "rank": 9,
+      "title": "Commander",
+      "id": "cmdr_max80",
+      "reports_to": "adm_ewitz",
+      "can_override_lower": true,
+      "can_override_same_rank": false
+    },
+    {
+      "rank": 8,
+      "title": "Captain",
+      "id": "cpt_eco",
+      "reports_to": "adm_ewitz",
+      "can_override_lower": true,
+      "can_override_same_rank": false
+    },
+    {
+      "rank": 7,
+      "title": "Lieutenant",
+      "id": "lt_generic",
+      "reports_to": "cpt_eco",
+      "can_override_lower": true,
+      "can_override_same_rank": false
+    },
+    {
+      "rank": 6,
+      "title": "Senior Agent",
+      "id": "agent_senior",
+      "reports_to": "cpt_eco",
+      "can_override_lower": true,
+      "can_override_same_rank": false
+    },
+    {
+      "rank": 5,
+      "title": "Agent",
+      "id": "agent_standard",
+      "reports_to": "agent_senior",
+      "can_override_lower": false,
+      "can_override_same_rank": false
+    },
+    {
+      "rank": 4,
+      "title": "Junior Agent",
+      "id": "agent_junior",
+      "reports_to": "agent_senior",
+      "can_override_lower": false,
+      "can_override_same_rank": false
+    },
+    {
+      "rank": 3,
+      "title": "Observer",
+      "id": "observer_unit",
+      "reports_to": "agent_senior",
+      "can_override_lower": false,
+      "can_override_same_rank": false
+    },
+    {
+      "rank": 2,
+      "title": "Restricted",
+      "id": "restricted_unit",
+      "reports_to": "observer_unit",
+      "can_override_lower": false,
+      "can_override_same_rank": false
+    },
+    {
+      "rank": 1,
+      "title": "Minimal",
+      "id": "minimal_unit",
+      "reports_to": "observer_unit",
+      "can_override_lower": false,
+      "can_override_same_rank": false
+    }
+  ],
+  "rules": {
+    "strict_chain_of_command": true,
+    "no_cross_rank_override": false,
+    "allow_downward_override": true,
+    "allow_upward_override": false,
+    "admiral_has_global_override": true,
+    "auto_resolve_conflicts": "delegate_to_stability_module"
+  }
+}
+

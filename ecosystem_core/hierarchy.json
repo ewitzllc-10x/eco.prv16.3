@@ -1,0 +1,6 @@
+"ranks": {
+  "10": {"title": "Admiral", "agent": "adm_ewitz"},
+  "9.5": {"title": "Commander", "agent": "cmdr_max80"},
+  "9": {"title": "Captain", "agent": "cpt_eco"},
+  "8": {"title": "First Lieutenant", "agent": "1lt_act", "reports_to": "cpt_eco"}
+}

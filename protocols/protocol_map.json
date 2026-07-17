@@ -1,0 +1,22 @@
+{
+  "module": "protocol_map",
+  "version": "1.6.3",
+  "codename": "pro16v3erbs",
+  "protocols": {
+    "core.boot": {"destination": "ecosystem_core", "script": "ecosystem_boot.py", "class": "EcosystemBoot"},
+    "core.sync": {"destination": "ecosystem_core", "script": "ecosystem_sync.py", "class": "EcosystemSync"},
+    "core.load_agents": {"destination": "ecosystem_core", "script": "agent_loader.py", "class": "AgentLoader"},
+    "adm.command": {"destination": "adm_ewitz", "script": "adm_ewitz.py", "class": "AdmEwitz", "rank": 10},
+    "cmdr.ops": {"destination": "cmdr_max80", "script": "cmdr_max80.py", "class": "CmdrMax80", "rank": 9.5},
+    "cpt.exec": {"destination": "cpt_eco", "script": "cpt_eco.py", "class": "CptEco", "rank": 9},
+    "1lt.field": {"destination": "1lt_act", "script": "1lt_act.py", "class": "LtAct", "rank": 8},
+    "ops.strategy": {"destination": "cmdr_max80", "script": "cmdr_max80.py", "class": "CmdrMax80", "rank": 9.5},
+    "ops.construction": {"destination": "cpt_eco", "script": "cpt_eco.py", "class": "CptEco", "rank": 9},
+    "ops.maintenance": {"destination": "1lt_act", "script": "1lt_act.py", "class": "LtAct", "rank": 8},
+    "ops.monitoring": {"destination": "1lt_act", "script": "1lt_act.py", "class": "LtAct", "rank": 8},
+    "cycles.heartbeat": {"destination": "ecosystem_core", "script": "cycles.json", "class": "heartbeat"},
+    "stability.check": {"destination": "ecosystem_core", "script": "stability.json", "class": "check"},
+    "readiness.check": {"destination": "ecosystem_core", "script": "readiness.json", "class": "check"},
+    "router.route": {"destination": "ecosystem_core", "script": "task_router.py", "class": "TaskRouter"}
+  }
+}
