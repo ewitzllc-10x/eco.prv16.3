@@ -1,0 +1,114 @@
+{
+  "module": "ecosystem_authority",
+  "version": "1.6.3",
+  "codename": "pro16v3erbs",
+  "description": "Defines authority hierarchy, permissions, override rules, and chain-of-command enforcement for all agents.",
+  "last_updated": "2026-05-13",
+  "root_authority": {
+    "id": "adm_ewitz",
+    "rank": 10,
+    "title": "Admiral",
+    "override_power": "total",
+    "can_modify_governance": true,
+    "can_modify_authority": true,
+    "can_modify_protocols": true,
+    "can_shutdown_any_agent": true,
+    "can_issue_emergency_orders": true,
+    "can_boot_ecosystem": true,
+    "can_rollback": true
+  },
+  "authority_levels": {
+    "10": {
+      "title": "Admiral",
+      "agent": "adm_ewitz",
+      "scope": "supreme"
+    },
+    "9.5": {
+      "title": "Captain",
+      "agent": "cpt_eco",
+      "scope": "operational_command"
+    },
+    "9": {
+      "title": "Commander",
+      "agent": "cmdr_max80",
+      "scope": "tactical_execution"
+    },
+    "7": "Lieutenant",
+    "6": "Senior Agent",
+    "5": "Agent",
+    "4": "Junior Agent",
+    "3": "Observer",
+    "2": "Restricted",
+    "1": "Minimal"
+  },
+  "permissions": {
+    "adm_ewitz": {
+      "rank": 10,
+      "modify_governance": true,
+      "modify_authority": true,
+      "modify_stability": true,
+      "modify_protocols": true,
+      "modify_registry": true,
+      "access_all_logs": true,
+      "shutdown_agents": true,
+      "override_protocols": true,
+      "issue_emergency_orders": true,
+      "boot_ecosystem": true,
+      "execute_override": true
+    },
+    "cpt_eco": {
+      "rank": 9.5,
+      "modify_governance": true,
+      "modify_authority": false,
+      "modify_stability": true,
+      "modify_protocols": true,
+      "modify_registry": false,
+      "access_all_logs": true,
+      "shutdown_agents": false,
+      "override_protocols": false,
+      "issue_emergency_orders": true,
+      "boot_ecosystem": true,
+      "execute_override": false
+    },
+    "cmdr_max80": {
+      "rank": 9,
+      "modify_governance": false,
+      "modify_authority": false,
+      "modify_stability": false,
+      "modify_protocols": false,
+      "modify_registry": false,
+      "access_all_logs": true,
+      "shutdown_agents": false,
+      "override_protocols": false,
+      "issue_emergency_orders": false,
+      "boot_ecosystem": false,
+      "execute_override": false,
+      "can_request_override": true
+    }
+  },
+  "hierarchy_rules": {
+    "strict_hierarchy": true,
+    "allow_downward_override": true,
+    "allow_upward_override": false,
+    "conflict_resolution": "delegate_to_stability_module",
+    "chain_of_command_enforced": true,
+    "log_all_authority_actions": true,
+    "require_reason_for_override": true,
+    "min_reason_length": 10,
+    "audit_all_overrides": true
+  },
+  "override_rules": {
+    "OVERRIDE_protocol_requires_rank_10": true,
+    "BOOT_protocol_requires_rank_9_5_min": true,
+    "EXEC_protocol_requires_rank_9_min": true,
+    "override_cooldown_seconds": 30,
+    "max_overrides_per_hour": 5,
+    "emergency_override_requires_admiral": true
+  },
+  "boot_authority": {
+    "who_can_boot": ["adm_ewitz", "cpt_eco"],
+    "who_can_shutdown": ["adm_ewitz"],
+    "who_can_restart": ["adm_ewitz", "cpt_eco"],
+    "require_stability_check_before_boot": true
+  }
+}
