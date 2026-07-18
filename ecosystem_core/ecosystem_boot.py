@@ -23,7 +23,7 @@ print(f"[PROTOCOLS] {list(pmap.get('protocols', {}).keys())}")
 # Import your executor
 from protocol_executor import ProtocolExecutor
 ex = ProtocolExecutor()
-for proto in ["core.init", "core.boot", "core.sync"]:
+for proto in ["core.boot", "core.sync"]:
     try:
         r = ex.execute(proto)
         print(f"[EXEC] {proto} -> {r['status']}")
