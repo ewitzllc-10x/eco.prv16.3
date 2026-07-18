@@ -9,7 +9,7 @@
     "rank": 9.5,
     "title": "Commander",
     "reports_to": "adm_ewitz",
-    "commands_over": ["cpt_eco", "1lt_act"]
+    "commands_over": ["cpt_eco", "1lt_action"]
   },
   "commands": {
     "INIT_CORE": {
@@ -40,14 +40,14 @@
       "protocol": "readiness.check",
       "rank_required": 9.5,
       "min_rank": 8,
-      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
       "description": "Verifies readiness criteria and operational gates."
     },
     "EMIT_HEARTBEAT": {
       "protocol": "cycles.heartbeat",
       "rank_required": 8,
       "min_rank": 8,
-      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
       "description": "Emits a heartbeat pulse for monitoring and timing alignment.",
       "auto_repeat": true
     },
@@ -55,7 +55,7 @@
       "protocol": "protocol.exec",
       "rank_required": 9.5,
       "min_rank": 8,
-      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
       "description": "Executes a protocol from the protocol map.",
       "requires_protocol_validation": true
     },
@@ -63,15 +63,15 @@
       "protocol": "router.route",
       "rank_required": 9,
       "min_rank": 8,
-      "allowed_agents": ["cmdr_max80", "cpt_eco", "1lt_act"],
+      "allowed_agents": ["cmdr_max80", "cpt_eco", "1lt_action"],
       "description": "Routes a task to the correct subsystem or agent.",
-      "can_delegate_to": ["cpt_eco", "1lt_act"]
+      "can_delegate_to": ["cpt_eco", "1lt_action"]
     },
     "GENERATE_REPORT": {
       "protocol": "report.generate",
       "rank_required": 9,
       "min_rank": 8,
-      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "allowed_agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
       "description": "Generates a structured ecosystem report."
     },
     "CHECK_COMMUNICATION": {
@@ -95,7 +95,7 @@
       "min_rank": 9.5,
       "allowed_agents": ["adm_ewitz", "cmdr_max80"],
       "description": "Commander override authority over Captain and below.",
-      "target": ["cpt_eco", "1lt_act"],
+      "target": ["cpt_eco", "1lt_action"],
       "requires_justification": true
     },
     "DELEGATE_TO_CPT": {

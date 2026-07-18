@@ -6,12 +6,12 @@
 
   "chain": {
     "expected_agents": 4,
-    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
     "ranks": {
       "adm_ewitz": 10,
       "cmdr_max80": 9.5,
       "cpt_eco": 9,
-      "1lt_act": 8
+      "1lt_action": 8
     }
   },
 
@@ -34,18 +34,18 @@
       "adm_ewitz": true,
       "cmdr_max80": true,
       "cpt_eco": true,
-      "1lt_act": true
+      "1lt_action": true
     },
     "entry_files_exist": {
       "adm_ewitz/adm_ewitz.py": true,
       "cmdr_max80/cmdr_max80.py": true,
       "cpt_eco/cpt_eco.py": true,
-      "1lt_act/1lt_act.py": true
+      "1lt_action/1lt_action.py": true
     },
     "personalities_exist": {
       "cmdr_max80/personality.json": true,
       "cpt_eco/personality.json": true,
-      "1lt_act/personality.json": true
+      "1lt_action/personality.json": true
     }
   },
 
@@ -72,7 +72,7 @@
     "step_5": "verify_agent_comms",
     "step_6": "activate_cycles",
     "step_7": "ecosystem_online_v163",
-    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
     "description": "Must boot 10 -> 9.5 -> 9 -> 8"
   },
 
@@ -80,7 +80,7 @@
     "expected_agents": 4,
     "min_agents": 4,
     "max_agents": 4,
-    "exact_chain": "adm_ewitz(10) -> cmdr_max80(9.5) -> cpt_eco(9) -> 1lt_act(8)",
+    "exact_chain": "adm_ewitz(10) -> cmdr_max80(9.5) -> cpt_eco(9) -> 1lt_action(8)",
     "fail_if": {
       "agents_less_than_4": "BLOCK BOOT - missing agents",
       "agents_more_than_4": "BLOCK BOOT - too many agents, expected exactly 4 for pro16v3erbs",

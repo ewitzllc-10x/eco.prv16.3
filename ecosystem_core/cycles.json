@@ -6,12 +6,12 @@
 
   "chain": {
     "expected_agents": 4,
-    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
     "ranks": {
       "adm_ewitz": 10,
       "cmdr_max80": 9.5,
       "cpt_eco": 9,
-      "1lt_act": 8
+      "1lt_action": 8
     }
   },
 
@@ -20,7 +20,7 @@
     "interval_ms": 1000,
     "protocol": "cycles.heartbeat",
     "description": "Primary ecosystem heartbeat every 1s",
-    "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
     "require_all_4": true
   },
 
@@ -58,7 +58,7 @@
       "protocol": "core.load_agents",
       "interval_ms": 2000,
       "description": "Check all 4 agents alive",
-      "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+      "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
       "fail_if_missing": true
     },
     "command_chain_rhythm": {
@@ -66,7 +66,7 @@
       "protocol": "router.route",
       "interval_ms": 3000,
       "description": "Verify command chain 10->9.5->9->8 intact",
-      "chain": "adm_ewitz -> cmdr_max80 -> cpt_eco -> 1lt_act"
+      "chain": "adm_ewitz -> cmdr_max80 -> cpt_eco -> 1lt_action"
     },
     "ops_rhythms": {
       "strategy": {
@@ -87,14 +87,14 @@
         "enabled": true,
         "protocol": "ops.maintenance",
         "interval_ms": 5000,
-        "destination": "1lt_act",
+        "destination": "1lt_action",
         "rank": 8
       },
       "monitoring": {
         "enabled": true,
         "protocol": "ops.monitoring",
         "interval_ms": 3000,
-        "destination": "1lt_act",
+        "destination": "1lt_action",
         "rank": 8
       }
     }

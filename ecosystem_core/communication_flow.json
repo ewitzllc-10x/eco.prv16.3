@@ -5,14 +5,14 @@
   "description": "Comm flow v1.6.3 - 4-agent business chain adm(10) -> max80(9.5) -> cpt(9) -> 1lt(8) with rank enforcement",
 
   "chain": {
-    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"],
+    "order": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"],
     "ranks": {
       "adm_ewitz": 10,
       "cmdr_max80": 9.5,
       "cpt_eco": 9,
-      "1lt_act": 8
+      "1lt_action": 8
     },
-    "flow": "adm_ewitz(10) -> cmdr_max80(9.5) -> cpt_eco(9) -> 1lt_act(8)"
+    "flow": "adm_ewitz(10) -> cmdr_max80(9.5) -> cpt_eco(9) -> 1lt_action(8)"
   },
 
   "channels": {
@@ -50,10 +50,10 @@
       "allowed_routes": [
         "adm_ewitz -> cmdr_max80",
         "adm_ewitz -> cpt_eco",
-        "adm_ewitz -> 1lt_act",
+        "adm_ewitz -> 1lt_action",
         "cmdr_max80 -> cpt_eco",
-        "cmdr_max80 -> 1lt_act",
-        "cpt_eco -> 1lt_act"
+        "cmdr_max80 -> 1lt_action",
+        "cpt_eco -> 1lt_action"
       ]
     },
     "report_chain": {
@@ -62,9 +62,9 @@
       "compression": "lz4",
       "description": "Bottom-up reporting chain",
       "allowed_routes": [
-        "1lt_act -> cpt_eco",
-        "1lt_act -> cmdr_max80",
-        "1lt_act -> adm_ewitz",
+        "1lt_action -> cpt_eco",
+        "1lt_action -> cmdr_max80",
+        "1lt_action -> adm_ewitz",
         "cpt_eco -> cmdr_max80",
         "cpt_eco -> adm_ewitz",
         "cmdr_max80 -> adm_ewitz"
@@ -75,7 +75,7 @@
       "encryption": "none",
       "compression": "none",
       "description": "Heartbeat for all 4 agents",
-      "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_act"]
+      "agents": ["adm_ewitz", "cmdr_max80", "cpt_eco", "1lt_action"]
     }
   },
 
