@@ -1,9 +1,0 @@
-{
-  "module": "cmdr_max80_DNA",
-  "version": "1.0.1",
-  "identity": {
-    "class": "Commander Max80",
-    "rank": 9,
-    "core_role": "Operational Strategist"
-  }
-}
