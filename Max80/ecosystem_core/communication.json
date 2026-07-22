@@ -1,0 +1,9 @@
+{
+  "channels": [
+    "command",
+    "report",
+    "sync",
+    "ws"
+  ],
+  "protocol": "json"
+}

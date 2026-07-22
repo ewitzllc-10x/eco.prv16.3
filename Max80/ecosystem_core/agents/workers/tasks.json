@@ -1,0 +1,7 @@
+{
+  "tasks": [
+    "execute",
+    "report",
+    "sync"
+  ]
+}

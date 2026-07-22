@@ -1,0 +1,9 @@
+{
+  "routes": {
+    "in": "eco.prv16.3",
+    "out": [
+      "cpt_eco"
+    ]
+  },
+  "priority": 1
+}

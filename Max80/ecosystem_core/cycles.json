@@ -1,0 +1,13 @@
+{
+  "cycles": [
+    {
+      "name": "init",
+      "interval": "on_boot"
+    },
+    {
+      "name": "sync",
+      "interval": "60s"
+    }
+  ],
+  "active": true
+}

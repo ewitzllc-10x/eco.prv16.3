@@ -1,0 +1,6 @@
+{
+  "rules": [
+    "follow hierarchy",
+    "report up"
+  ]
+}

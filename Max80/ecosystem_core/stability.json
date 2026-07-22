@@ -1,0 +1,8 @@
+{
+  "stability": 0.98,
+  "checks": [
+    "identity",
+    "hierarchy"
+  ],
+  "last_check": "2026-07-22"
+}

@@ -1,0 +1,10 @@
+{
+  "protocol": "commander",
+  "steps": [
+    "receive",
+    "verify",
+    "route",
+    "execute",
+    "report"
+  ]
+}
