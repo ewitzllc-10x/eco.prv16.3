@@ -1,6 +1,0 @@
-{
-  "paths": {
-    "cmdr_max80": "ecosystem/cmdr_max80/cmdr_max80.py",
-    "os_max80": "ecosystem/cmdr_max80/sync_max80/os_max80.py"
-  }
-}
