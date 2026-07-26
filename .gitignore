@@ -18,3 +18,4 @@ cbm/
 m8.dna.core.binary
 **/core.binary
 **/*.binary
+_archive/
