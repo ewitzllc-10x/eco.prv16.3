@@ -1,0 +1,1 @@
+class EwitzOS: status="ONLINE"
