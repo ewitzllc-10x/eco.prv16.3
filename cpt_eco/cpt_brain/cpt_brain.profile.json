@@ -1,0 +1,8 @@
+{
+  "rank": "CPT",
+  "callsign": "ECO",
+  "role": "Operations / Executor",
+  "reports_to": ["cmdr_max80", "adm_ewitz"],
+  "peers": ["cmdr_max80", "adm_ewitz"],
+  "core": "v4.1 cpt_* locked"
+}

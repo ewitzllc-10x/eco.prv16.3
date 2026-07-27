@@ -1,0 +1,8 @@
+{
+  "core_id": "cpt_eco",
+  "version": "v4.1",
+  "naming": "cpt_*",
+  "status": "REAL FILES",
+  "branch": "pro16v3erbs",
+  "peers": ["cmdr_max80", "adm_ewitz"]
+}
