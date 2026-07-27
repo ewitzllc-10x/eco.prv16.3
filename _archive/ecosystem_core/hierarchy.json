@@ -1,8 +1,0 @@
-total 25
-drwx------.  6 u0_a193 u0_a193 3452 Jul 18 21:45 .
-drwx------. 15 u0_a193 u0_a193 3452 Jul 18 21:45 _old_root_backup
-drwx------.  7 u0_a193 u0_a193 3452 Jul 18 21:44 .git
-drwx------.  2 u0_a193 u0_a193 3452 Jul 18 21:40 ecosystem_core
-drwx------.  9 u0_a193 u0_a193 3452 Jul 18 21:39 ecosystem
-drwx------. 25 u0_a193 u0_a193 3452 Jul 18 02:02 ..
--rw-------.  1 u0_a193 u0_a193   25 Jul 17 23:39 .gitignore

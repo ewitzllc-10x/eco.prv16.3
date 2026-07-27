@@ -19,3 +19,9 @@ m8.dna.core.binary
 **/core.binary
 **/*.binary
 _archive/
+
+# LEGACY GHOSTS - never again
+Max80/
+ecosystem_core/
+ecosystem_core_v3_archived_20260726/
+_archive/
