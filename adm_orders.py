@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 import importlib.util
-
 ROOT = Path.cwd()
 sys.path.insert(0, str(ROOT))
 
@@ -11,11 +10,10 @@ def load_coder(path, class_name):
     spec.loader.exec_module(mod)
     return getattr(mod, class_name)()
 
-# Load by file path — bypasses dot-name import hell
 CPT = load_coder("cpt_eco/cpt_workflows/cpt_workflow_coder.py", "CptWorkflowCoder")
 LT1 = load_coder("cpt_eco/lt1_action/lt1_workflows/workflow_coder.py", "Lt1WorkflowCoder")
 LT2 = load_coder("cpt_eco/lt2_devil_dog/lt2_workflows/workflow_coder.py", "Lt2WorkflowCoder")
-CMDR = load_coder("cmdr_max80/workflows/workflow_main.py", "CmdrWorkflow")
+CMDR = load_coder("cmdr_max80/workflows/workflow.main.py", "CmdrWorkflow")
 
 CHAIN = {
     "cpt eco": CPT, "cpt": CPT,
@@ -37,7 +35,10 @@ def route(order: str):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print('Try: python3 adm_orders.py "CMDR MAX80 build Stallion website"')
+        print('Usage: python3 adm_orders.py "CMDR MAX80 build Stallion website"')
+        print('Examples:')
+        print(' "CPT ECO design auth system"')
+        print(' "1LT build API"')
+        print(' "full chain build marketplace"')
         sys.exit(0)
     route(" ".join(sys.argv[1:]))
-
