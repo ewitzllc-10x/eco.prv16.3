@@ -1,3 +1,8 @@
+from pathlib import Path
+import sys
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
 from cmdr_max80.brain.brain_coder import CoderBrain
 from cmdr_max80.src.src_coder import CoderSrc
 from cmdr_max80.src.src_debugger import CoderDebugger
@@ -18,8 +23,7 @@ class CmdrWorkflow:
         print(f"[PLAN] {plan['steps']}")
         print(f"[REPO] {repo['total_py_files']} py files")
         if any(k in cmd.lower() for k in ["build", "stallion", "website"]):
-            # PROVE IT - build Stallion MVP
-            self.coder.write_file("stallion_website/index.html", "<h1>STALLION 10X - BUILT BY CMDR MAX80</h1><p>Admiral Ewitz top table online</p>")
+            self.coder.write_file("stallion_website/index.html", "<h1>STALLION 10X - BUILT BY CMDR MAX80</h1><p>Admiral Ewitz top table online - V5 SENIOR CODER</p>")
             print("[CMDR] STALLION WEBSITE BUILT")
         return f"CMDR: MAX80 SENIOR CODER EXECUTED - {cmd}"
 
@@ -29,3 +33,6 @@ class CmdrWorkflow:
         return self.debugger.debug_loop(path)
     def commit(self, msg):
         return self.runner.git_commit(msg)
+
+if __name__ == "__main__":
+    CmdrWorkflow().execute("Build Stallion website")
