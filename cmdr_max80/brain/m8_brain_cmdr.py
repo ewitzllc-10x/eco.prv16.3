@@ -32,6 +32,7 @@ from vault.memory import log_memory
 
 class CmdrMax80:
     def __init__(self):
+        self.db_path = "vault/eco_memory.db"
         self.brain = CodeAnalyzer()
         self.ram = CodeMemory()
         self.vault = log_memory
@@ -47,6 +48,30 @@ class CmdrMax80:
         con.close()
         return row[0] if row else "No memory found"
 
+    def list_memories(self):
+        """LIST: Show all memories CMDR has saved."""
+        import sqlite3
+        con = sqlite3.connect(self.db_path)
+        cur = con.cursor()
+        cur.execute("SELECT data, ts FROM memory ORDER BY ts DESC")
+        rows = cur.fetchall()
+        con.close()
+        print(f"[CMDR] Found {len(rows)} memories:")
+        for data, ts in rows[:10]:  # Show last 10
+            print(f"  {ts} | {data[:60]}...")
+        return rows
+
+    def forget(self, key):
+        """DELETE: Remove memories matching key."""
+        import sqlite3
+        con = sqlite3.connect(self.db_path)
+        cur = con.cursor()
+        cur.execute("DELETE FROM memory WHERE data LIKE?", (f"%{key}%",))
+        deleted = cur.rowcount
+        con.commit()
+        con.close()
+        print(f"[CMDR] Forgot {deleted} memories matching: {key}")
+        return deleted
     def process(self, code, key="last"):
         cached = self.recall(key)
         if cached != "No memory found":
