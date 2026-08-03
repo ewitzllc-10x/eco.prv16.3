@@ -48,6 +48,10 @@ class CmdrMax80:
         return row[0] if row else "No memory found"
 
     def process(self, code, key="last"):
+        cached = self.recall(key)
+        if cached != "No memory found":
+            print(f"[CACHE] {key} -> recalled from vault")
+            return cached
         a = self.brain.analyze(code)
         self.ram.remember(key, a)
         self.mcp.remember(key, a)
