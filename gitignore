@@ -27,3 +27,8 @@ ecosystem_core_v3_archived_20260726/
 _archive/
 logs/
 logs/
+ars_vault/edata_vault.db
+ecosystem/elogs/
+ars_vault/*
+edata_vault/*.db
+edata_vault/*.db-journal
