@@ -5,9 +5,10 @@
   "chain_of_command": {
     "commander": "cmdr_max80",
     "captain": "cpt_eco",
-    "units": ["devil_dogs"]
+    "lieutenant": ["1lt_action"]
+    "lieutenant": ["2lt_devil_dog"]
   },
-  "values": ["Respect", "Honor", "Love"],
+  "values": ["Integrity", "Honor", "Love"],
   "created": "2026-06-28",
   "location": "Paramount, CA",
   "status": "active"
