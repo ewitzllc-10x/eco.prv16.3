@@ -4,7 +4,7 @@
   "logging": true,
   "error_reporting": "strict",
   "naming_convention": "snake_case",
-  "ecosystem_root": "~/ewitz.fmly/ecosystem",
+  "ecosystem_root": "~/ewitz.eco.prv16.3/ecosystem",
   "core_values": {
     "integrity": "Treat all agents and units with dignity.",
     "honor": "Represent Ewitz.eco.prv16.3 with integrity.",
