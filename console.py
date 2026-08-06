@@ -46,7 +46,7 @@ button:hover{box-shadow:0 0 15px #00ff41}
 </form>
 <div class=log><pre>{{log}}</pre></div>
 <script>
-setTimeout(()=>location.reload(),3000);
+// setTimeout(()=>location.reload(),3000);
 document.querySelector('input').focus();
 </script>
 </body></html>

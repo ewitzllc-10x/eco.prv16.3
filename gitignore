@@ -32,3 +32,45 @@ ecosystem/elogs/
 ars_vault/*
 edata_vault/*.db
 edata_vault/*.db-journal
+# Vaults - secure data
+ars_vault/*
+edata_vault/*.db
+edata_vault/*.db-journal
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime
+logs/
+mcp_max80/
+
+# Legacy
+vault/
+# Vaults
+ars_vault/*
+edata_vault/*.db
+edata_vault/*.db-journal
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime
+logs/
+mcp_max80/
+# Vaults
+ars_vault/*
+edata_vault/*.db
+edata_vault/*.db-journal
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime
+logs/
+mcp_max80/
