@@ -1,0 +1,57 @@
+{
+  "module": "cpt_eco_routing_rules",
+  "version": "1.0.1",
+  "description": "Defines routing logic, fallback paths, and execution flow for ecosystem protocols.",
+  "routing_order": {
+    "strict_protocol_sequence": true,
+    "sequence": ["INIT", "SYNC", "CHECK", "EXEC"],
+    "allow_emergency_override": {
+      "enabled": true,
+      "protocol": "OVERRIDE",
+      "requires_level": 10,
+      "requires_reason": true
+    }
+  },
+  "fallback_rules": {
+    "on_validation_failure": "CHECK",
+    "on_authority_failure": "CHECK",
+    "on_integrity_failure": "CHECK",
+    "on_unknown_protocol": "HALT_AND_ALERT",
+    "max_fallback_chain": 2
+  },
+  "execution_paths": {
+    "INIT": {
+      "route_to": "core_initializer",
+      "log_route": true,
+      "timeout_seconds": 10
+    },
+    "SYNC": {
+      "route_to": "ecosystem_sync_engine",
+      "log_route": true,
+      "timeout_seconds": 15
+    },
+    "CHECK": {
+      "route_to": "stability_engine",
+      "log_route": true,
+      "timeout_seconds": 30
+    },
+    "EXEC": {
+      "route_to": "task_router",
+      "log_route": true,
+      "timeout_seconds": 60
+    },
+    "OVERRIDE": {
+      "route_to": "override_engine",
+      "log_route": true,
+      "timeout_seconds": 10,
+      "audit_required": true
+    }
+  },
+  "safety_guards": {
+    "halt_on_invalid_route": true,
+    "halt_on_missing_protocol": false,
+    "halt_on_fallback_loop": true,
+    "log_all_routing_errors": true,
+    "checksum_required_before_exec": true
+  }
+}
