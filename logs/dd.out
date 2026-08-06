@@ -1,0 +1,9 @@
+nohup: ignoring input
+[DEVIL_DOGS] EXECUTING: 2LT_DEVIL_DOG verify deployment
+[DEVIL_DOGS] Verification: stallion_website/ exists
+[DEVIL_DOGS] Complete: DD_TASK_COMPLETE
+[DEVIL_DOGS] EXECUTING: 2LT_DEVIL_DOG create html structure
+[DEVIL_DOGS] Complete: DD_TASK_COMPLETE
+[DEVIL_DOGS] EXECUTING: 2LT_DEVIL_DOG verify deployment
+[DEVIL_DOGS] Verification: stallion_website/ exists
+[DEVIL_DOGS] Complete: DD_TASK_COMPLETE
