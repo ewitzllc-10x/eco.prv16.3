@@ -1,6 +1,6 @@
 # Admiral Ewitz — Directives
 
-These directives define active operational priorities for the Ewitz.fmly ecosystem.
+These directives define active operational priorities for the Ewitz.eco.prv16.3 ecosystem.
 
 ## Active Directives
 
@@ -20,7 +20,7 @@ These directives define active operational priorities for the Ewitz.fmly ecosyst
 - All agents must report errors to system_logs.
 - cmdr_max80 holds tactical authority; cpt_eco holds operational authority.
 - Admiral retains override authority at all times.
-- Respect, Honor, and Love remain foundational values for all operations.
+- Integrity, Honor, and Love remain foundational values for all operations.
 
 ## Operational Notes
 
