@@ -1,0 +1,2653 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SuperAGI</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; border: 0 solid currentColor; }
+html { -webkit-text-size-adjust: 100%; line-height: normal; }
+body { margin: 0; }
+ul, ol, menu { list-style: none; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea, optgroup { font: inherit; color: inherit; background: transparent; border: 0; padding: 0; margin: 0; text-align: inherit; letter-spacing: inherit; }
+button { cursor: pointer; }
+table { border-collapse: separate; border-spacing: 0; }
+img, picture, video, canvas, svg { display: inline-block; }
+/* Lottie runtime fit: the player re-mounts its svg/canvas into an absolute overlay that fills
+   the host's captured (per-viewport, definite) box. Force that runtime media to fit the box so
+   an aspect-mismatched viewBox (e.g. a portrait animation in a shorter, letterboxed source box)
+   can't inflate past the pinned height. Scoped to the runtime-marked host only. */
+[data-ditto-lottie] > div > svg, [data-ditto-lottie] > div > canvas { width: 100%; height: 100%; display: block; }
+h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd { margin: 0; }
+/* Neutralize UA text defaults to inherit so the generator's default-skipping is
+   correct: a property equal to its inherited value is simply not emitted. */
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+b, strong, th { font-weight: inherit; }
+em, i, cite, var, dfn, address, q { font-style: inherit; }
+small, big, sub, sup { font-size: inherit; }
+sub, sup { vertical-align: inherit; }
+code, kbd, samp, pre, tt, var { font-family: inherit; font-size: inherit; }
+mark { background-color: transparent; color: inherit; }
+abbr[title] { text-decoration: none; }
+fieldset, legend { min-width: 0; }
+
+/* fonts */
+@font-face {
+  font-family: "Assistant";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/7157797ef918.woff2") format("woff2");
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
+@font-face {
+  font-family: "Assistant";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/bb1bd2487452.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Assistant";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/c59211544b7f.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  font-style: italic;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/22033153ae2b.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  font-style: italic;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/16e131a903cd.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/34c73ecbbc93.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/1c49a6ebe98b.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Font Awesome 5 Brands";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("public/assets/cloned/fonts/c163cb1df36a.woff2") format("woff2"), url("public/assets/cloned/fonts/23d2f8f19ed1.woff") format("woff"), url("public/assets/cloned/fonts/9fa9251d5f86.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("public/assets/cloned/fonts/3297c2039ae1.woff2") format("woff2"), url("public/assets/cloned/fonts/17e743666dd5.woff") format("woff"), url("public/assets/cloned/fonts/d581b85a4db6.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url("public/assets/cloned/fonts/bf82eba736f7.woff2") format("woff2"), url("public/assets/cloned/fonts/862f2c56ead2.woff") format("woff"), url("public/assets/cloned/fonts/327e006d425b.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/0dde7fd522a3.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/88887a354253.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/005060cff645.woff2") format("woff2");
+  unicode-range: U+1F00-1FFF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/9ff5631df742.woff2") format("woff2");
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/e420c80bab48.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/d049f41a9e89.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4e68b75a30e2.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/16d184c287c5.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/68815530676d.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/ba04b5bee93c.woff2") format("woff2");
+  unicode-range: U+1F00-1FFF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/ee704f499d46.woff2") format("woff2");
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/99e42b906a8a.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/1ddebf61f904.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2d62a7e1e86c.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/15cbea95ea4a.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/7bbb8eacf863.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4754e56de8fd.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/51ff03705bfa.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/c63107f318ed.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/15cbea95ea4a.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/7bbb8eacf863.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4754e56de8fd.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/51ff03705bfa.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/c63107f318ed.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/15cbea95ea4a.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/7bbb8eacf863.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4754e56de8fd.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/51ff03705bfa.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Mulish";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/c63107f318ed.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2aa8070f41e7.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/b54e650e7029.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/16b5788c18c0.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/a2b0c2e3157f.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/f7a01dbfdd4b.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/8202b6648736.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/5d8873d8050a.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/d4d84dd169e7.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: italic;
+  font-weight: 100;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/9f084aafba86.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/68e48a5c181b.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: italic;
+  font-weight: 200;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/557a42181c2e.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4b1edbeb2061.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/557a42181c2e.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4b1edbeb2061.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/470f1da1b60a.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/bacf87fe123d.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/697742264911.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2d0c7b2fd8fb.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/395fe49bd5e2.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2e903aa0e010.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/45d9608cec4a.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2c70288d5443.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2a367d0f142a.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4e028bade1bc.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/ab7b4598d939.woff2") format("woff2");
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/b38a65883ac2.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/07f20b4e77fa.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/a1296c59362b.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2a367d0f142a.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4e028bade1bc.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/ab7b4598d939.woff2") format("woff2");
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/b38a65883ac2.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/07f20b4e77fa.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/a1296c59362b.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2a367d0f142a.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4e028bade1bc.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/ab7b4598d939.woff2") format("woff2");
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/b38a65883ac2.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/07f20b4e77fa.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/a1296c59362b.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2a367d0f142a.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4e028bade1bc.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/ab7b4598d939.woff2") format("woff2");
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/b38a65883ac2.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/07f20b4e77fa.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/a1296c59362b.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/2a367d0f142a.woff2") format("woff2");
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/4e028bade1bc.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/ab7b4598d939.woff2") format("woff2");
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/b38a65883ac2.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/07f20b4e77fa.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/a1296c59362b.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Mono";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/db0da221cb1b.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/089f3d3aeb39.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Space Mono";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/97e169b43116.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("public/assets/cloned/fonts/a02710a7b0c4.ttf") format("truetype");
+}
+
+/* tokens */
+:root {
+  --background: rgb(250, 250, 250);
+  --foreground: rgb(31, 41, 55);
+  --primary: rgba(255, 239, 218, 0.6);
+  --border: rgba(0, 0, 0, 0.08);
+  --muted-foreground: rgb(102, 102, 102);
+  --muted: rgb(75, 85, 99);
+  --color-001: rgb(0, 0, 0);
+  --color-002: rgba(0, 0, 0, 0.16);
+  --color-003: rgba(0, 0, 0, 0.02);
+  --color-004: rgb(255, 255, 255);
+  --color-005: rgb(145, 136, 124);
+  --color-006: rgb(156, 163, 175);
+}
+
+:root {
+  /* fonts */
+  --font-body: "Proxima Nova", sans-serif;
+  /* fontSizes */
+  --font-size-001: 12px;
+  --font-size-002: 14px;
+  --font-size-003: 16px;
+  --font-size-004: 20px;
+  /* fontWeights */
+  --font-weight-001: 400;
+  --font-weight-002: 600;
+  /* lineHeights */
+  --line-height-001: 16px;
+  --line-height-002: 22px;
+  --line-height-003: 28px;
+  --line-height-004: 24px;
+  --line-height-005: 17px;
+  /* spacing */
+  --space-001: 2px;
+  --space-002: 4px;
+  --space-003: 6px;
+  --space-004: 8px;
+  --space-005: 10px;
+  --space-006: 12px;
+  --space-007: 15px;
+  --space-008: 16px;
+  --space-009: 24px;
+  --space-010: 80px;
+  /* radii */
+  --radius-001: 8px;
+  /* breakpoints */
+  --bp-375: 375px;
+  --bp-768: 768px;
+  --bp-1280: 1280px;
+  --bp-1920: 1920px;
+}
+
+
+/* page base */
+html { background: rgb(14, 14, 16); }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+html, body { overflow-x: clip; }
+
+/* nodes */
+.cn0{display:flex;flex-direction:column;color:var(--foreground);font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-size:var(--font-size-003);font-weight:var(--font-weight-001);font-style:normal;line-height:var(--line-height-001);letter-spacing:normal;word-spacing:0px;text-align:start;text-transform:none;white-space:normal;word-break:normal;overflow-wrap:break-word;text-indent:0px;text-shadow:none;font-variant-caps:normal;font-feature-settings:normal;list-style-position:outside;writing-mode:horizontal-tb;direction:ltr;background-color:var(--background)}
+.cn1{display:block}
+.cn2{display:flex;flex-direction:column;font-family:var(--font-body);background-color:var(--background)}
+.cn3{height:800px;display:flex;flex-direction:column}
+.cn4{height:48px;display:flex;justify-content:space-between;align-items:center;color:var(--color-004)}
+.cn5{height:60px;display:flex;padding-top:var(--space-008);padding-right:var(--space-008);padding-bottom:var(--space-008);padding-left:var(--space-006);justify-content:center;cursor:pointer}
+.cn6{width:40px;height:28px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;vertical-align:middle}
+.cn7{height:34px;display:flex;align-items:center}
+.cn8{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;margin-right:var(--space-004);padding-top:var(--space-002);padding-right:20px;padding-bottom:var(--space-002);padding-left:20px;border-top-left-radius:30px;border-top-right-radius:30px;border-bottom-right-radius:30px;border-bottom-left-radius:30px;justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--background);font-size:var(--font-size-002);font-weight:var(--font-weight-002);line-height:var(--line-height-005);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:rgb(19, 19, 21);box-shadow:rgba(0, 0, 0, 0.02) 0px 2px 0px 0px;cursor:pointer}
+.cn9{width:16px;height:16px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;vertical-align:middle}
+.cn10{display:block}
+.cn11{height:752px;display:flex;flex-grow:1;flex-basis:0%;overflow-x:hidden;overflow-y:hidden}
+.cn12{width:56px;display:flex;padding-top:var(--space-001);padding-bottom:var(--space-004);flex-direction:column;justify-content:space-between;align-items:center;color:var(--color-001)}
+.cn13{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+.cn14{height:100%;display:flex;flex-direction:column;overflow-x:auto;overflow-y:scroll}
+.cn15{height:100%;display:flex;flex-direction:column;justify-content:space-between}
+.cn16{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn17{height:40px;display:block;cursor:pointer}
+.cn18{display:flex;margin-right:var(--space-004);margin-left:var(--space-004);padding-top:var(--space-005);padding-right:var(--space-005);padding-bottom:var(--space-005);padding-left:var(--space-005);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:space-between;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004);background-color:var(--border)}
+.cn19{width:20px;display:flex;min-width:0px;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn20{width:20px;height:20px;display:block;max-width:100%;flex-shrink:0;overflow-x:clip;overflow-y:clip;vertical-align:middle}
+.cn21{height:20px;display:flex;min-width:0px;align-items:baseline;flex-grow:1;flex-basis:0%;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn22{height:20px;display:block;overflow-x:hidden;overflow-y:hidden;font-size:var(--font-size-002);line-height:20px;white-space:nowrap;text-wrap:nowrap}
+.cn23{height:40px;display:block;cursor:pointer}
+.cn24{display:flex;margin-right:var(--space-004);margin-left:var(--space-004);padding-top:var(--space-005);padding-right:var(--space-005);padding-bottom:var(--space-005);padding-left:var(--space-005);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:space-between;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn25{width:20px;display:flex;min-width:0px;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn26{width:20px;height:20px;display:block;max-width:100%;flex-shrink:0;overflow-x:clip;overflow-y:clip;vertical-align:middle}
+.cn27{height:20px;display:flex;min-width:0px;align-items:baseline;flex-grow:1;flex-basis:0%;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn28{height:20px;display:block;opacity:0.8;overflow-x:hidden;overflow-y:hidden;font-size:var(--font-size-002);line-height:20px;white-space:nowrap;text-wrap:nowrap}
+.cn29{display:flex;margin-top:var(--space-008);margin-bottom:var(--space-004);justify-content:center}
+.cn30{border-width:1px;border-style:solid;border-color:var(--border);display:block;padding-top:var(--space-004);padding-right:var(--space-004);padding-bottom:var(--space-004);padding-left:var(--space-004);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn31{width:16px;height:16px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;vertical-align:middle}
+.cn32{height:752px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;border-top-left-radius:var(--radius-001);flex-direction:column;flex-grow:1;flex-basis:0%;overflow-x:auto;overflow-y:auto;background-color:var(--color-004)}
+.cn33{width:1222px;display:block;padding-top:var(--space-008);padding-right:var(--space-008);padding-bottom:var(--space-008);padding-left:var(--space-008);flex-grow:1;flex-shrink:0}
+.cn34{height:100%;display:flex;padding-top:var(--space-009);padding-right:102.4px;padding-bottom:var(--space-009);padding-left:102.4px;flex-direction:column;row-gap:var(--space-009);column-gap:var(--space-009)}
+.cn35{display:flex;padding-top:var(--space-010);padding-right:var(--space-010);padding-bottom:var(--space-010);padding-left:var(--space-010);flex-direction:column;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn36{display:block;color:var(--color-001);font-size:30px;font-weight:700;line-height:36px}
+.cn37{display:block;color:var(--muted-foreground);line-height:var(--line-height-004)}
+.cn38{width:100%;height:91px;display:flex;margin-top:var(--space-004);justify-content:center}
+.cn39{width:66.5%;border-width:1px;border-style:solid;border-color:var(--color-002);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-004);padding-right:var(--space-006);padding-bottom:var(--space-004);padding-left:var(--space-006);border-top-left-radius:12px;border-top-right-radius:12px;border-bottom-right-radius:12px;border-bottom-left-radius:12px;flex-direction:column;align-self:stretch;row-gap:var(--space-004);column-gap:var(--space-004);word-break:break-word;cursor:default}
+.cn40{display:block}
+.cn41{width:100%;height:32px;min-height:32px;display:inline-block;position:relative;top:0px;right:0px;bottom:0px;left:0px;max-width:100%;border-top-left-radius:6px;border-top-right-radius:6px;border-bottom-right-radius:6px;border-bottom-left-radius:6px;overflow-x:auto;overflow-y:auto;vertical-align:bottom;color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);white-space:pre-wrap;cursor:text}
+.cn41::placeholder{color:rgba(0, 0, 0, 0.2)}
+.cn42{display:flex;justify-content:flex-end}
+.cn43{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-004);padding-bottom:var(--space-002);padding-left:var(--space-002);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--background);font-size:var(--font-size-002);font-weight:var(--font-weight-002);line-height:var(--line-height-005);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:rgb(19, 19, 21);box-shadow:rgba(0, 0, 0, 0.02) 0px 2px 0px 0px;cursor:pointer}
+.cn44{width:20px;height:20px;display:block;max-width:100%;margin-left:var(--space-002);overflow-x:clip;overflow-y:clip;vertical-align:middle}
+.cn45{height:68.375px;display:flex;justify-content:space-between;align-items:flex-start;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn46{display:flex;flex-direction:column;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn47{display:block;color:var(--color-001);font-size:30px;font-weight:700;line-height:36px}
+.cn48{height:24.375px;display:block;color:var(--color-001);font-size:15px;line-height:24.375px}
+.cn49{display:inline;font-weight:var(--font-weight-002);text-decoration-line:underline;cursor:pointer}
+.cn50{height:28px;display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-003);padding-right:var(--space-003);padding-bottom:var(--space-003);padding-left:var(--space-003);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;cursor:pointer}
+.cn51{display:block}
+.cn52{display:flex;margin-top:var(--space-004);flex-direction:column;row-gap:32px;column-gap:32px}
+.cn53{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn54{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn55{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn56{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-columns:repeat(3, minmax(0, 1fr));grid-template-rows:repeat(3, minmax(0, 1fr))}
+.cn57{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn58{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn59{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn60{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn61{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn62{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn63{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn64{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn65{display:block}
+.cn66{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn67{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn68{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn69{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn70{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn71{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn72{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn73{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn74{display:block}
+.cn75{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn76{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn77{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn78{width:154.75px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn79{width:154.75px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn80{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn81{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn82{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn83{display:block}
+.cn84{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn85{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn86{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn87{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn88{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn89{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn90{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn91{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn92{display:block}
+.cn93{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn94{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn95{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn96{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn97{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn98{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn99{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn100{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn101{display:block}
+.cn102{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn103{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn104{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn105{width:154.75px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn106{width:154.75px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn107{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn108{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn109{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn110{display:block}
+.cn111{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn112{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn113{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn114{width:154.734px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn115{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn116{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn117{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn118{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn119{display:block}
+.cn120{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn121{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn122{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn123{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn124{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn125{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn126{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn127{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn128{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn129{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn130{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn131{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn132{display:block}
+.cn133{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn134{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn135{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn136{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn137{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn138{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn139{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn140{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn141{display:block}
+.cn142{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn143{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn144{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn145{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn146{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn147{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn148{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn149{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn150{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn151{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn152{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn153{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn154{display:block}
+.cn155{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn156{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn157{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn158{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn159{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn160{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn161{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn162{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn163{display:block}
+.cn164{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn165{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn166{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn167{width:154.75px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn168{width:154.75px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn169{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn170{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn171{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn172{display:block}
+.cn173{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn174{height:28px;display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn175{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn176{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn177{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn178{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn179{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn180{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn181{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn182{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn183{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn184{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn185{display:block}
+.cn186{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn187{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn188{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn189{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn190{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn191{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn192{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn193{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn194{display:block}
+.cn195{height:116px;display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn196{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn197{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn198{height:72px;display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn199{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn200{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn201{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn202{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn203{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn204{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn205{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn206{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn207{display:block}
+.cn208{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn209{height:28px;display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn210{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn211{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn212{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn213{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn214{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn215{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn216{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn217{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn218{display:block}
+.cn219{border-width:1px;border-style:solid;border-color:var(--color-005);display:flex;padding-top:var(--space-001);padding-right:var(--space-002);padding-bottom:var(--space-001);padding-left:var(--space-002);border-top-left-radius:4px;border-top-right-radius:4px;border-bottom-right-radius:4px;border-bottom-left-radius:4px;align-items:center;color:rgb(81, 75, 68);background-color:var(--primary)}
+.cn220{display:block;font-size:10px;font-weight:500;line-height:10px;overflow-wrap:normal}
+.cn221{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn222{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn223{display:block}
+.cn224{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn225{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn226{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn227{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn228{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn229{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn230{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn231{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn232{display:block}
+.cn233{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn234{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn235{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn236{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn237{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn238{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn239{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn240{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn241{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn242{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn243{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn244{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn245{display:block}
+.cn246{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn247{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn248{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn249{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn250{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn251{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn252{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn253{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn254{display:block}
+.cn255{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn256{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn257{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn258{width:154.75px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn259{width:154.75px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn260{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn261{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn262{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn263{display:block}
+.cn264{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn265{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn266{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn267{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn268{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn269{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn270{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn271{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn272{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn273{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn274{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn275{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn276{display:block}
+.cn277{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn278{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn279{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn280{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn281{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn282{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn283{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn284{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn285{display:block}
+.cn286{height:116px;display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn287{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn288{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn289{height:72px;display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn290{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn291{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn292{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn293{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn294{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn295{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn296{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn297{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn298{display:block}
+.cn299{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn300{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn301{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn302{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn303{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn304{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn305{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn306{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn307{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn308{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn309{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn310{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn311{display:block}
+.cn312{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn313{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn314{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn315{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn316{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn317{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn318{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn319{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn320{display:block}
+.cn321{height:116px;display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn322{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn323{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn324{height:72px;display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn325{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn326{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn327{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn328{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn329{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn330{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn331{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn332{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn333{display:block}
+.cn334{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn335{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn336{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn337{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-columns:repeat(3, minmax(0, 1fr));grid-template-rows:repeat(2, minmax(0, 1fr))}
+.cn338{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn339{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn340{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn341{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn342{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn343{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn344{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn345{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn346{display:block}
+.cn347{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn348{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn349{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn350{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn351{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn352{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn353{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn354{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn355{display:block}
+.cn356{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn357{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn358{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn359{width:154.75px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn360{width:154.75px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn361{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn362{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn363{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn364{display:block}
+.cn365{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn366{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn367{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn368{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn369{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn370{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn371{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn372{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn373{display:block}
+.cn374{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn375{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn376{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn377{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn378{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn379{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn380{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn381{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn382{display:block}
+.cn383{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn384{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn385{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn386{width:154.75px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn387{width:154.75px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn388{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn389{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn390{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn391{display:block}
+.cn392{display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn393{height:28px;display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn394{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn395{display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn396{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn397{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn398{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn399{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn400{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn401{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn402{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn403{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn404{display:block}
+.cn405{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn406{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn407{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn408{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn409{width:154.734px;height:16px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn410{height:16px;display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn411{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn412{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn413{display:block}
+.cn414{height:116px;display:flex;flex-direction:column;row-gap:var(--space-008);column-gap:var(--space-008)}
+.cn415{display:flex;flex-direction:column;row-gap:var(--space-002);column-gap:var(--space-002)}
+.cn416{display:block;color:var(--color-001);font-size:var(--font-size-004);font-weight:var(--font-weight-002);line-height:var(--line-height-003)}
+.cn417{height:72px;display:grid;row-gap:var(--space-008);column-gap:var(--space-008);grid-template-rows:72px;grid-template-columns:repeat(3, minmax(0, 1fr))}
+.cn418{height:72px;display:block;padding-top:var(--space-006);padding-right:var(--space-006);padding-bottom:var(--space-006);padding-left:var(--space-006);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);cursor:pointer}
+.cn419{height:48px;display:flex;align-items:center;row-gap:var(--space-006);column-gap:var(--space-006)}
+.cn420{width:48px;height:48px;border-width:1px;border-style:solid;border-color:var(--color-002);display:block;max-width:100%;border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);overflow-x:clip;overflow-y:clip;object-fit:cover;vertical-align:middle}
+.cn421{width:154.734px;height:48px;display:block;min-width:0px;flex-grow:1;flex-basis:0%}
+.cn422{width:154.734px;display:flex;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004)}
+.cn423{display:block;overflow-x:hidden;overflow-y:hidden;color:var(--color-001);font-weight:var(--font-weight-002);white-space:nowrap;text-wrap:nowrap}
+.cn424{height:32px;overflow-x:hidden;overflow-y:hidden;color:var(--muted-foreground);font-size:var(--font-size-001);-webkit-line-clamp:2}
+.cn425{height:34px;border-width:1px;border-style:solid;border-color:var(--border);display:flex;position:relative;top:0px;right:0px;bottom:0px;left:0px;padding-top:var(--space-002);padding-right:var(--space-007);padding-bottom:var(--space-002);padding-left:var(--space-007);border-top-left-radius:var(--radius-001);border-top-right-radius:var(--radius-001);border-bottom-right-radius:var(--radius-001);border-bottom-left-radius:var(--radius-001);justify-content:center;align-items:center;row-gap:var(--space-002);column-gap:var(--space-002);color:var(--color-001);font-size:var(--font-size-002);line-height:var(--line-height-002);text-align:center;white-space:nowrap;text-wrap:nowrap;background-color:var(--color-003)}
+.cn426{display:block}
+.cn427{border-top-width:1px;border-top-style:solid;border-top-color:var(--border);display:flex;padding-top:var(--space-009);padding-right:var(--space-008);padding-bottom:40px;padding-left:var(--space-008);flex-direction:column;align-items:center;row-gap:54px;column-gap:54px;background-color:var(--color-003)}
+.cn428{display:flex;flex-direction:column;align-items:center;row-gap:var(--space-009);column-gap:var(--space-009)}
+.cn429{display:block;color:var(--color-001);font-weight:var(--font-weight-002);line-height:var(--line-height-004)}
+.cn430{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;row-gap:var(--space-009);column-gap:var(--space-009)}
+.cn431{width:103px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn432{width:52px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn433{width:109px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn434{width:119px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn435{width:77px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn436{width:198px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn437{width:75px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn438{width:69px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn439{width:76px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn440{width:127px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn441{width:77px;height:24px;display:block;max-width:100%;overflow-x:clip;overflow-y:clip;object-fit:contain;vertical-align:middle}
+.cn442{display:flex;justify-content:center;align-items:center;row-gap:var(--space-004);column-gap:var(--space-004);color:var(--muted);line-height:var(--line-height-004)}
+.cn443{display:block}
+.cn444{display:block;color:var(--color-006)}
+.cn445{display:block}
+.cn446{display:block;color:var(--color-006)}
+.cn447{display:block;text-decoration-line:underline;cursor:pointer}
+.cn448{display:block;color:var(--color-006)}
+.cn449{display:block;text-decoration-line:underline;cursor:pointer}
+.cn450{display:block;color:var(--color-006)}
+.cn451{display:block}
+
+@media (max-width: 571px) {
+.cn3{height:812px}
+.cn11{height:764px}
+.cn12{display:none}
+.cn32{height:764px}
+.cn33{width:373px}
+.cn34{padding-right:var(--space-008);padding-left:var(--space-008)}
+.cn35{padding-top:var(--space-009);padding-right:var(--space-009);padding-bottom:var(--space-009);padding-left:var(--space-009)}
+.cn39{width:100%}
+.cn45{height:189.125px;flex-direction:column}
+.cn48{height:73.125px}
+.cn56{grid-template-columns:repeat(1, minmax(0, 1fr));grid-template-rows:repeat(7, minmax(0, 1fr))}
+.cn60{width:146px}
+.cn61{width:146px}
+.cn69{width:146px}
+.cn70{width:146px}
+.cn78{width:146px}
+.cn79{width:146px}
+.cn87{width:146px}
+.cn88{width:146px}
+.cn96{width:146px}
+.cn97{width:146px}
+.cn105{width:146px}
+.cn106{width:146px}
+.cn114{width:146px}
+.cn115{width:146px}
+.cn123{grid-template-rows:72px 72px;grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn127{width:146px}
+.cn128{width:146px}
+.cn136{width:146px}
+.cn137{width:146px}
+.cn145{grid-template-rows:72px 72px 72px;grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn149{width:146px}
+.cn150{width:146px}
+.cn158{width:146px}
+.cn159{width:146px}
+.cn167{width:146px}
+.cn168{width:146px}
+.cn176{grid-template-rows:72px 72px;grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn180{width:146px}
+.cn181{width:146px}
+.cn189{width:146px}
+.cn190{width:146px}
+.cn198{grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn202{width:146px}
+.cn203{width:146px}
+.cn211{grid-template-rows:72px 72px;grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn215{width:146px}
+.cn216{width:146px}
+.cn227{width:146px}
+.cn228{width:146px}
+.cn236{grid-template-rows:72px 72px 72px;grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn240{width:146px}
+.cn241{width:146px}
+.cn249{width:146px}
+.cn250{width:146px}
+.cn258{width:146px}
+.cn259{width:146px}
+.cn267{grid-template-rows:72px 72px;grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn271{width:146px}
+.cn272{width:146px}
+.cn280{width:146px}
+.cn281{width:146px}
+.cn289{grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn293{width:146px}
+.cn294{width:146px}
+.cn302{grid-template-rows:72px 72px;grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn306{width:146px}
+.cn307{width:146px}
+.cn315{width:146px}
+.cn316{width:146px}
+.cn324{grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn328{width:146px}
+.cn329{width:146px}
+.cn337{grid-template-columns:repeat(1, minmax(0, 1fr));grid-template-rows:repeat(6, minmax(0, 1fr))}
+.cn341{width:146px}
+.cn342{width:146px}
+.cn350{width:146px}
+.cn351{width:146px}
+.cn359{width:146px}
+.cn360{width:146px}
+.cn368{width:146px}
+.cn369{width:146px}
+.cn377{width:146px}
+.cn378{width:146px}
+.cn386{width:146px}
+.cn387{width:146px}
+.cn395{grid-template-rows:72px 72px;grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn399{width:146px}
+.cn400{width:146px}
+.cn408{width:146px}
+.cn409{width:146px}
+.cn417{grid-template-columns:repeat(1, minmax(0, 1fr))}
+.cn421{width:146px}
+.cn422{width:146px}
+}
+
+@media (min-width: 572px) and (max-width: 1024px) {
+.cn3{height:1024px}
+.cn11{height:976px}
+.cn32{height:976px}
+.cn33{width:710px}
+.cn34{padding-right:61.44px;padding-left:61.44px}
+.cn45{height:92.75px}
+.cn48{height:48.75px}
+.cn56{grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(4, minmax(0, 1fr))}
+.cn60{width:106.562px}
+.cn61{width:106.562px}
+.cn69{width:106.562px}
+.cn70{width:106.562px}
+.cn78{width:106.562px}
+.cn79{width:106.562px}
+.cn87{width:106.562px}
+.cn88{width:106.562px}
+.cn96{width:106.562px}
+.cn97{width:106.562px}
+.cn105{width:106.562px}
+.cn106{width:106.562px}
+.cn114{width:106.562px}
+.cn115{width:106.562px}
+.cn123{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn127{width:106.562px}
+.cn128{width:106.562px}
+.cn136{width:106.562px}
+.cn137{width:106.562px}
+.cn145{grid-template-rows:72px 72px;grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn149{width:106.562px}
+.cn150{width:106.562px}
+.cn158{width:106.562px}
+.cn159{width:106.562px}
+.cn167{width:106.562px}
+.cn168{width:106.562px}
+.cn176{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn180{width:106.562px}
+.cn181{width:106.562px}
+.cn189{width:106.562px}
+.cn190{width:106.562px}
+.cn198{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn202{width:106.562px}
+.cn203{width:106.562px}
+.cn211{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn215{width:106.562px}
+.cn216{width:106.562px}
+.cn227{width:106.562px}
+.cn228{width:106.562px}
+.cn236{grid-template-rows:72px 72px;grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn240{width:106.562px}
+.cn241{width:106.562px}
+.cn249{width:106.562px}
+.cn250{width:106.562px}
+.cn258{width:106.562px}
+.cn259{width:106.562px}
+.cn267{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn271{width:106.562px}
+.cn272{width:106.562px}
+.cn280{width:106.562px}
+.cn281{width:106.562px}
+.cn289{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn293{width:106.562px}
+.cn294{width:106.562px}
+.cn302{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn306{width:106.562px}
+.cn307{width:106.562px}
+.cn315{width:106.562px}
+.cn316{width:106.562px}
+.cn324{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn328{width:106.562px}
+.cn329{width:106.562px}
+.cn337{grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(3, minmax(0, 1fr))}
+.cn341{width:106.562px}
+.cn342{width:106.562px}
+.cn350{width:106.562px}
+.cn351{width:106.562px}
+.cn359{width:106.562px}
+.cn360{width:106.562px}
+.cn368{width:106.562px}
+.cn369{width:106.562px}
+.cn377{width:106.562px}
+.cn378{width:106.562px}
+.cn386{width:106.562px}
+.cn387{width:106.562px}
+.cn395{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn399{width:106.562px}
+.cn400{width:106.562px}
+.cn408{width:106.562px}
+.cn409{width:106.562px}
+.cn417{grid-template-columns:repeat(2, minmax(0, 1fr))}
+.cn421{width:106.562px}
+.cn422{width:106.562px}
+}
+
+@media (min-width: 1601px) {
+.cn3{height:1080px}
+.cn11{height:1032px}
+.cn12{width:240px}
+.cn19{width:91px}
+.cn25{width:89px}
+.cn29{padding-right:var(--space-004);padding-left:var(--space-004);justify-content:flex-end}
+.cn32{height:1032px}
+.cn33{width:1678px}
+.cn34{padding-right:153.6px;padding-left:153.6px}
+.cn60{width:272.594px}
+.cn61{width:272.594px}
+.cn69{width:272.609px}
+.cn70{width:272.609px}
+.cn78{width:272.594px}
+.cn79{width:272.594px}
+.cn87{width:272.594px}
+.cn88{width:272.594px}
+.cn96{width:272.609px}
+.cn97{width:272.609px}
+.cn105{width:272.594px}
+.cn106{width:272.594px}
+.cn114{width:272.594px}
+.cn115{width:272.594px}
+.cn117{height:16px}
+.cn127{width:272.594px}
+.cn128{width:272.594px}
+.cn136{width:272.609px}
+.cn137{width:272.609px}
+.cn149{width:272.594px}
+.cn150{width:272.594px}
+.cn158{width:272.609px}
+.cn159{width:272.609px}
+.cn167{width:272.594px}
+.cn168{width:272.594px}
+.cn180{width:272.594px}
+.cn181{width:272.594px}
+.cn189{width:272.609px}
+.cn190{width:272.609px}
+.cn202{width:272.594px}
+.cn203{width:272.594px}
+.cn215{width:272.594px}
+.cn216{width:272.594px}
+.cn227{width:272.609px}
+.cn228{width:272.609px}
+.cn240{width:272.594px}
+.cn241{width:272.594px}
+.cn249{width:272.609px}
+.cn250{width:272.609px}
+.cn258{width:272.594px}
+.cn259{width:272.594px}
+.cn271{width:272.594px}
+.cn272{width:272.594px}
+.cn280{width:272.609px}
+.cn281{width:272.609px}
+.cn293{width:272.594px}
+.cn294{width:272.594px}
+.cn306{width:272.594px}
+.cn307{width:272.594px}
+.cn315{width:272.609px}
+.cn316{width:272.609px}
+.cn328{width:272.594px}
+.cn329{width:272.594px}
+.cn341{width:272.594px}
+.cn342{width:272.594px}
+.cn350{width:272.609px}
+.cn351{width:272.609px}
+.cn359{width:272.594px}
+.cn360{width:272.594px}
+.cn368{width:272.594px}
+.cn369{width:272.594px}
+.cn377{width:272.609px}
+.cn378{width:272.609px}
+.cn386{width:272.594px}
+.cn387{width:272.594px}
+.cn399{width:272.594px}
+.cn400{width:272.594px}
+.cn408{width:272.609px}
+.cn409{width:272.609px}
+.cn421{width:272.594px}
+.cn422{width:272.594px}
+}
+
+</style>
+</head>
+<body class="cn0" data-cid="n0">
+     
+    <div class="cn1" data-cid="n1" id="app_homepage">
+      <body class="cn2" data-cid="n2">
+        <div class="cn3" data-cid="n3" id="app_homepage_inner">
+          <nav class="cn4" data-cid="n4" id="homepage_navbar">
+            <a class="cn5" data-cid="n5" aria-current="page" href="https://superagi.com/">
+              <img class="cn6" data-cid="n6" alt="SuperAGI - AI Super App for Work" id="superagi_logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+            </a>
+            <div class="cn7" data-cid="n7">
+              <button class="cn8" data-cid="n8" type="button">
+                <img class="cn9" data-cid="n9" alt="bolt" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                <span class="cn10" data-cid="n10">
+                  Sign up for free
+                </span>
+              </button>
+            </div>
+          </nav>
+          <div class="cn11" data-cid="n11">
+            <div class="cn12" data-cid="n12" id="sidebar_section">
+              <div class="cn13" data-cid="n13">
+                <div class="cn14" data-cid="n14">
+                  <div class="cn15" data-cid="n15">
+                    <div class="cn16" data-cid="n16">
+                      <a class="cn17" data-cid="n17" aria-current="page" href="https://superagi.com/">
+                        <div class="cn18" data-cid="n18">
+                          <div class="cn19" data-cid="n19">
+                            <img class="cn20" data-cid="n20" alt="i assistant_icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                            <div class="cn21" data-cid="n21">
+                              <span class="cn22" data-cid="n22">
+                                I Assistant
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                      <a class="cn23" data-cid="n23" href="https://superagi.com/market">
+                        <div class="cn24" data-cid="n24">
+                          <div class="cn25" data-cid="n25">
+                            <img class="cn26" data-cid="n26" alt="add apps_icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                            <div class="cn27" data-cid="n27">
+                              <span class="cn28" data-cid="n28">
+                                Add Apps
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="cn29" data-cid="n29">
+                  <div class="cn30" data-cid="n30">
+                    <img class="cn31" data-cid="n31" alt="expand_icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cn32" data-cid="n32">
+              <div class="cn33" data-cid="n33">
+                <div class="cn34" data-cid="n34" id="app_store_page">
+                  <div class="cn35" data-cid="n35">
+                    <h1 class="cn36" data-cid="n36">
+                      Get Work done with SuperAGI
+                    </h1>
+                    <p class="cn37" data-cid="n37">
+                       Supercharge your business with digital workers and agentic software 
+                    </p>
+                    <div class="cn38" data-cid="n38" id="text-input">
+                      <div class="cn39" data-cid="n39">
+                        <div class="cn40" data-cid="n40">
+                          <textarea class="cn41" data-cid="n41" id="homepage-chat-input" placeholder="What do you want to do?" value=""></textarea>
+                        </div>
+                        <div class="cn42" data-cid="n42">
+                          <button class="cn43" data-cid="n43" type="button">
+                            <img class="cn44" data-cid="n44" alt="send_icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="cn45" data-cid="n45">
+                    <div class="cn46" data-cid="n46">
+                      <h1 class="cn47" data-cid="n47">
+                        Explore AI Apps &amp; Agents
+                      </h1>
+                      <p class="cn48" data-cid="n48">
+                         SuperAGI combines 50 + AI Native apps and agents on one platform at unbelievable affordable 
+                        <a class="cn49" data-cid="n49" href="https://superagi.com/pricing">
+                          price
+                        </a>
+                        . 
+                      </p>
+                    </div>
+                    <button class="cn50" data-cid="n50" type="button">
+                      <span class="cn51" data-cid="n51">
+                        See all apps
+                      </span>
+                    </button>
+                  </div>
+                  <div class="cn52" data-cid="n52">
+                    <div class="cn53" data-cid="n53">
+                      <div class="cn54" data-cid="n54">
+                        <h2 class="cn55" data-cid="n55">
+                          Sales
+                        </h2>
+                      </div>
+                      <div class="cn56" data-cid="n56">
+                        <a class="cn57" data-cid="n57" href="https://superagi.com/market/library">
+                          <div class="cn58" data-cid="n58">
+                            <img class="cn59" data-cid="n59" alt="Library (Enablement)" src="public/assets/cloned/images/3b619c8aba1f.jpg" />
+                            <div class="cn60" data-cid="n60">
+                              <div class="cn61" data-cid="n61">
+                                <h3 class="cn62" data-cid="n62">
+                                  Library (Enablement)
+                                </h3>
+                              </div>
+                              <p class="cn63" data-cid="n63">
+                                A living library of playbooks, templates, scripts, and assets embedded in your flows.
+                              </p>
+                            </div>
+                            <div class="cn64" data-cid="n64" type="button">
+                              <span class="cn65" data-cid="n65">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn66" data-cid="n66" href="https://superagi.com/market/business-phone">
+                          <div class="cn67" data-cid="n67">
+                            <img class="cn68" data-cid="n68" alt="Business Phone" src="public/assets/cloned/images/033c3141a424.jpg" />
+                            <div class="cn69" data-cid="n69">
+                              <div class="cn70" data-cid="n70">
+                                <h3 class="cn71" data-cid="n71">
+                                  Business Phone
+                                </h3>
+                              </div>
+                              <p class="cn72" data-cid="n72">
+                                A smart business phone for 1-to-1 calls with call logging, notes, and seamless CRM tracking.
+                              </p>
+                            </div>
+                            <div class="cn73" data-cid="n73" type="button">
+                              <span class="cn74" data-cid="n74">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn75" data-cid="n75" href="https://superagi.com/market/sales-dialer">
+                          <div class="cn76" data-cid="n76">
+                            <img class="cn77" data-cid="n77" alt="Sales Dialer" src="public/assets/cloned/images/50ce35c2fa66.jpg" />
+                            <div class="cn78" data-cid="n78">
+                              <div class="cn79" data-cid="n79">
+                                <h3 class="cn80" data-cid="n80">
+                                  Sales Dialer
+                                </h3>
+                              </div>
+                              <p class="cn81" data-cid="n81">
+                                Run high-volume calling campaigns with power and parallel dialing to boost connect rates.
+                              </p>
+                            </div>
+                            <div class="cn82" data-cid="n82" type="button">
+                              <span class="cn83" data-cid="n83">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn84" data-cid="n84" href="https://superagi.com/market/cold-outreach">
+                          <div class="cn85" data-cid="n85">
+                            <img class="cn86" data-cid="n86" alt="Cold Outreach" src="public/assets/cloned/images/3b2f02dc117c.jpg" />
+                            <div class="cn87" data-cid="n87">
+                              <div class="cn88" data-cid="n88">
+                                <h3 class="cn89" data-cid="n89">
+                                  Cold Outreach
+                                </h3>
+                              </div>
+                              <p class="cn90" data-cid="n90">
+                                AI SDR handles the grind of prospecting, personalization and follow-ups so reps can sell.
+                              </p>
+                            </div>
+                            <div class="cn91" data-cid="n91" type="button">
+                              <span class="cn92" data-cid="n92">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn93" data-cid="n93" href="https://superagi.com/market/crm">
+                          <div class="cn94" data-cid="n94">
+                            <img class="cn95" data-cid="n95" alt="CRM" src="public/assets/cloned/images/ece50279b115.jpg" />
+                            <div class="cn96" data-cid="n96">
+                              <div class="cn97" data-cid="n97">
+                                <h3 class="cn98" data-cid="n98">
+                                  CRM
+                                </h3>
+                              </div>
+                              <p class="cn99" data-cid="n99">
+                                Your AI-native system of record for contacts, companies, deals and the tasks that move them.
+                              </p>
+                            </div>
+                            <div class="cn100" data-cid="n100" type="button">
+                              <span class="cn101" data-cid="n101">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn102" data-cid="n102" href="https://superagi.com/market/sequences">
+                          <div class="cn103" data-cid="n103">
+                            <img class="cn104" data-cid="n104" alt="Sequences" src="public/assets/cloned/images/fc2073c12bdd.jpg" />
+                            <div class="cn105" data-cid="n105">
+                              <div class="cn106" data-cid="n106">
+                                <h3 class="cn107" data-cid="n107">
+                                  Sequences
+                                </h3>
+                              </div>
+                              <p class="cn108" data-cid="n108">
+                                Multi-channel sequences with 1:1 personalization; replies roll into a single, trackable thread.
+                              </p>
+                            </div>
+                            <div class="cn109" data-cid="n109" type="button">
+                              <span class="cn110" data-cid="n110">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn111" data-cid="n111" href="https://superagi.com/market/invoices">
+                          <div class="cn112" data-cid="n112">
+                            <img class="cn113" data-cid="n113" alt="Invoices" src="public/assets/cloned/svg/b2481f9517bd.svg" />
+                            <div class="cn114" data-cid="n114">
+                              <div class="cn115" data-cid="n115">
+                                <h3 class="cn116" data-cid="n116">
+                                  Invoices
+                                </h3>
+                              </div>
+                              <p class="cn117" data-cid="n117">
+                                Issue, send and track invoices end-to-end.
+                              </p>
+                            </div>
+                            <div class="cn118" data-cid="n118" type="button">
+                              <span class="cn119" data-cid="n119">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn120" data-cid="n120">
+                      <div class="cn121" data-cid="n121">
+                        <h2 class="cn122" data-cid="n122">
+                          Sales Data
+                        </h2>
+                      </div>
+                      <div class="cn123" data-cid="n123">
+                        <a class="cn124" data-cid="n124" href="https://superagi.com/market/prospect">
+                          <div class="cn125" data-cid="n125">
+                            <img class="cn126" data-cid="n126" alt="Prospect" src="public/assets/cloned/images/005b435f7240.jpg" />
+                            <div class="cn127" data-cid="n127">
+                              <div class="cn128" data-cid="n128">
+                                <h3 class="cn129" data-cid="n129">
+                                  Prospect
+                                </h3>
+                              </div>
+                              <p class="cn130" data-cid="n130">
+                                Find the right leads fast and auto-enrich them with verified emails and phones.
+                              </p>
+                            </div>
+                            <div class="cn131" data-cid="n131" type="button">
+                              <span class="cn132" data-cid="n132">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn133" data-cid="n133" href="https://superagi.com/market/data_enrichments">
+                          <div class="cn134" data-cid="n134">
+                            <img class="cn135" data-cid="n135" alt="Data Enrichment" src="public/assets/cloned/images/ac4722ecdac1.jpg" />
+                            <div class="cn136" data-cid="n136">
+                              <div class="cn137" data-cid="n137">
+                                <h3 class="cn138" data-cid="n138">
+                                  Data Enrichment
+                                </h3>
+                              </div>
+                              <p class="cn139" data-cid="n139">
+                                Upload CSV files of people or companies to automatically enrich them with missing contact and business information.
+                              </p>
+                            </div>
+                            <div class="cn140" data-cid="n140" type="button">
+                              <span class="cn141" data-cid="n141">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn142" data-cid="n142">
+                      <div class="cn143" data-cid="n143">
+                        <h2 class="cn144" data-cid="n144">
+                          Automations
+                        </h2>
+                      </div>
+                      <div class="cn145" data-cid="n145">
+                        <a class="cn146" data-cid="n146" href="https://superagi.com/market/process_design">
+                          <div class="cn147" data-cid="n147">
+                            <img class="cn148" data-cid="n148" alt="Process Design" src="public/assets/cloned/images/24bad539c882.jpg" />
+                            <div class="cn149" data-cid="n149">
+                              <div class="cn150" data-cid="n150">
+                                <h3 class="cn151" data-cid="n151">
+                                  Process Design
+                                </h3>
+                              </div>
+                              <p class="cn152" data-cid="n152">
+                                Design lightweight process journeys that standardize execution by auto-creating tasks and updating properties at every step.
+                              </p>
+                            </div>
+                            <div class="cn153" data-cid="n153" type="button">
+                              <span class="cn154" data-cid="n154">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn155" data-cid="n155" href="https://superagi.com/market/workflows">
+                          <div class="cn156" data-cid="n156">
+                            <img class="cn157" data-cid="n157" alt="Workflows" src="public/assets/cloned/images/274b7f6f40f9.jpg" />
+                            <div class="cn158" data-cid="n158">
+                              <div class="cn159" data-cid="n159">
+                                <h3 class="cn160" data-cid="n160">
+                                  Workflows
+                                </h3>
+                              </div>
+                              <p class="cn161" data-cid="n161">
+                                Drag-and-run GTM workflows that connect signals, outreach, tasks, and updates.
+                              </p>
+                            </div>
+                            <div class="cn162" data-cid="n162" type="button">
+                              <span class="cn163" data-cid="n163">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn164" data-cid="n164" href="https://superagi.com/market/forms">
+                          <div class="cn165" data-cid="n165">
+                            <img class="cn166" data-cid="n166" alt="Forms" src="public/assets/cloned/images/8b7261ebee6c.jpg" />
+                            <div class="cn167" data-cid="n167">
+                              <div class="cn168" data-cid="n168">
+                                <h3 class="cn169" data-cid="n169">
+                                  Forms
+                                </h3>
+                              </div>
+                              <p class="cn170" data-cid="n170">
+                                Build custom, branded forms (internal or customer-facing) that capture data and instantly update CRM, create tasks, and log activities.
+                              </p>
+                            </div>
+                            <div class="cn171" data-cid="n171" type="button">
+                              <span class="cn172" data-cid="n172">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn173" data-cid="n173">
+                      <div class="cn174" data-cid="n174">
+                        <h2 class="cn175" data-cid="n175">
+                          BI &amp; Analytics
+                        </h2>
+                      </div>
+                      <div class="cn176" data-cid="n176">
+                        <a class="cn177" data-cid="n177" href="https://superagi.com/market/analytics">
+                          <div class="cn178" data-cid="n178">
+                            <img class="cn179" data-cid="n179" alt="Analytics" src="public/assets/cloned/images/29264e27e5e6.jpg" />
+                            <div class="cn180" data-cid="n180">
+                              <div class="cn181" data-cid="n181">
+                                <h3 class="cn182" data-cid="n182">
+                                  Analytics
+                                </h3>
+                              </div>
+                              <p class="cn183" data-cid="n183">
+                                Revenue, funnel, and conversation intelligence that shows what's working—now.
+                              </p>
+                            </div>
+                            <div class="cn184" data-cid="n184" type="button">
+                              <span class="cn185" data-cid="n185">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn186" data-cid="n186" href="https://superagi.com/market/dashboards">
+                          <div class="cn187" data-cid="n187">
+                            <img class="cn188" data-cid="n188" alt="Dashboards" src="public/assets/cloned/images/9677bc9651d1.jpg" />
+                            <div class="cn189" data-cid="n189">
+                              <div class="cn190" data-cid="n190">
+                                <h3 class="cn191" data-cid="n191">
+                                  Dashboards
+                                </h3>
+                              </div>
+                              <p class="cn192" data-cid="n192">
+                                Create dashboards that match how your team actually works, not the other way around.
+                              </p>
+                            </div>
+                            <div class="cn193" data-cid="n193" type="button">
+                              <span class="cn194" data-cid="n194">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn195" data-cid="n195">
+                      <div class="cn196" data-cid="n196">
+                        <h2 class="cn197" data-cid="n197">
+                          Marketing
+                        </h2>
+                      </div>
+                      <div class="cn198" data-cid="n198">
+                        <a class="cn199" data-cid="n199" href="https://superagi.com/market/campaigns">
+                          <div class="cn200" data-cid="n200">
+                            <img class="cn201" data-cid="n201" alt="Campaigns" src="public/assets/cloned/images/96fb46b0eb9f.jpg" />
+                            <div class="cn202" data-cid="n202">
+                              <div class="cn203" data-cid="n203">
+                                <h3 class="cn204" data-cid="n204">
+                                  Campaigns
+                                </h3>
+                              </div>
+                              <p class="cn205" data-cid="n205">
+                                Orchestrate multi-channel campaigns and journeys that learn and adapt.
+                              </p>
+                            </div>
+                            <div class="cn206" data-cid="n206" type="button">
+                              <span class="cn207" data-cid="n207">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn208" data-cid="n208">
+                      <div class="cn209" data-cid="n209">
+                        <h2 class="cn210" data-cid="n210">
+                          Customer Support &amp; Success
+                        </h2>
+                      </div>
+                      <div class="cn211" data-cid="n211">
+                        <a class="cn212" data-cid="n212" href="https://superagi.com/market/unibox">
+                          <div class="cn213" data-cid="n213">
+                            <img class="cn214" data-cid="n214" alt="Unibox" src="public/assets/cloned/images/4b87fcbebf9b.jpg" />
+                            <div class="cn215" data-cid="n215">
+                              <div class="cn216" data-cid="n216">
+                                <h3 class="cn217" data-cid="n217">
+                                  Unibox
+                                </h3>
+                                <div class="cn218" data-cid="n218" id="app_store_28_status_tag_provider">
+                                  <div class="cn219" data-cid="n219">
+                                    <span class="cn220" data-cid="n220">
+                                      Alpha
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <p class="cn221" data-cid="n221">
+                                To communicate with all your customers across different channels at one place.
+                              </p>
+                            </div>
+                            <div class="cn222" data-cid="n222" type="button">
+                              <span class="cn223" data-cid="n223">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn224" data-cid="n224" href="https://superagi.com/market/ai_live_chat">
+                          <div class="cn225" data-cid="n225">
+                            <img class="cn226" data-cid="n226" alt="Customer Support" src="public/assets/cloned/images/529034739b71.jpg" />
+                            <div class="cn227" data-cid="n227">
+                              <div class="cn228" data-cid="n228">
+                                <h3 class="cn229" data-cid="n229">
+                                  Customer Support
+                                </h3>
+                              </div>
+                              <p class="cn230" data-cid="n230">
+                                Instant, AI-assisted chat that resolves, routes, or books—without breaking context.
+                              </p>
+                            </div>
+                            <div class="cn231" data-cid="n231" type="button">
+                              <span class="cn232" data-cid="n232">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn233" data-cid="n233">
+                      <div class="cn234" data-cid="n234">
+                        <h2 class="cn235" data-cid="n235">
+                          Meetings
+                        </h2>
+                      </div>
+                      <div class="cn236" data-cid="n236">
+                        <a class="cn237" data-cid="n237" href="https://superagi.com/market/meeting_links">
+                          <div class="cn238" data-cid="n238">
+                            <img class="cn239" data-cid="n239" alt="Meeting Links" src="public/assets/cloned/images/d8f4aad13de3.jpg" />
+                            <div class="cn240" data-cid="n240">
+                              <div class="cn241" data-cid="n241">
+                                <h3 class="cn242" data-cid="n242">
+                                  Meeting Links
+                                </h3>
+                              </div>
+                              <p class="cn243" data-cid="n243">
+                                Transform how you schedule and manage meetings with smart booking links and AI-powered meeting intelligence that captures every detail automatically.
+                              </p>
+                            </div>
+                            <div class="cn244" data-cid="n244" type="button">
+                              <span class="cn245" data-cid="n245">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn246" data-cid="n246" href="https://superagi.com/market/routing_form">
+                          <div class="cn247" data-cid="n247">
+                            <img class="cn248" data-cid="n248" alt="Meeting Router" src="public/assets/cloned/images/54f0cd2fa7e7.jpg" />
+                            <div class="cn249" data-cid="n249">
+                              <div class="cn250" data-cid="n250">
+                                <h3 class="cn251" data-cid="n251">
+                                  Meeting Router
+                                </h3>
+                              </div>
+                              <p class="cn252" data-cid="n252">
+                                Smart forms that qualify your leads and automatically route them to the right sales rep or meeting—turning every website visitor into an opportunity.
+                              </p>
+                            </div>
+                            <div class="cn253" data-cid="n253" type="button">
+                              <span class="cn254" data-cid="n254">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn255" data-cid="n255" href="https://superagi.com/market/ai_notetaker">
+                          <div class="cn256" data-cid="n256">
+                            <img class="cn257" data-cid="n257" alt="AI Notetaker" src="public/assets/cloned/images/588512301cb4.jpg" />
+                            <div class="cn258" data-cid="n258">
+                              <div class="cn259" data-cid="n259">
+                                <h3 class="cn260" data-cid="n260">
+                                  AI Notetaker
+                                </h3>
+                              </div>
+                              <p class="cn261" data-cid="n261">
+                                Your AI notetaker that automatically joins, records, and summarizes every meeting—so you can focus on the conversation, not taking notes.
+                              </p>
+                            </div>
+                            <div class="cn262" data-cid="n262" type="button">
+                              <span class="cn263" data-cid="n263">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn264" data-cid="n264">
+                      <div class="cn265" data-cid="n265">
+                        <h2 class="cn266" data-cid="n266">
+                          Ecommerce
+                        </h2>
+                      </div>
+                      <div class="cn267" data-cid="n267">
+                        <a class="cn268" data-cid="n268" href="https://superagi.com/market/ecommerce_marketing">
+                          <div class="cn269" data-cid="n269">
+                            <img class="cn270" data-cid="n270" alt="Ecommerce Marketing" src="public/assets/cloned/images/0db9bf7a5547.jpg" />
+                            <div class="cn271" data-cid="n271">
+                              <div class="cn272" data-cid="n272">
+                                <h3 class="cn273" data-cid="n273">
+                                  Ecommerce Marketing
+                                </h3>
+                              </div>
+                              <p class="cn274" data-cid="n274">
+                                Grow revenue with AI-powered ecommerce marketing across email, SMS, WhatsApp, and more.
+                              </p>
+                            </div>
+                            <div class="cn275" data-cid="n275" type="button">
+                              <span class="cn276" data-cid="n276">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn277" data-cid="n277" href="https://superagi.com/market/products">
+                          <div class="cn278" data-cid="n278">
+                            <img class="cn279" data-cid="n279" alt="Products" src="public/assets/cloned/svg/a2e14c681f3f.svg" />
+                            <div class="cn280" data-cid="n280">
+                              <div class="cn281" data-cid="n281">
+                                <h3 class="cn282" data-cid="n282">
+                                  Products
+                                </h3>
+                              </div>
+                              <p class="cn283" data-cid="n283">
+                                Catalog of products and services with pricing, SKUs, and metadata.
+                              </p>
+                            </div>
+                            <div class="cn284" data-cid="n284" type="button">
+                              <span class="cn285" data-cid="n285">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn286" data-cid="n286">
+                      <div class="cn287" data-cid="n287">
+                        <h2 class="cn288" data-cid="n288">
+                          Vibe Coding
+                        </h2>
+                      </div>
+                      <div class="cn289" data-cid="n289">
+                        <a class="cn290" data-cid="n290" href="https://superagi.com/market/vibe_coder">
+                          <div class="cn291" data-cid="n291">
+                            <img class="cn292" data-cid="n292" alt="Vibe Coder" src="public/assets/cloned/images/3a0e25815fe8.jpg" />
+                            <div class="cn293" data-cid="n293">
+                              <div class="cn294" data-cid="n294">
+                                <h3 class="cn295" data-cid="n295">
+                                  Vibe Coder
+                                </h3>
+                              </div>
+                              <p class="cn296" data-cid="n296">
+                                Build and deploy web apps by chatting with AI — from idea to live preview in minutes.
+                              </p>
+                            </div>
+                            <div class="cn297" data-cid="n297" type="button">
+                              <span class="cn298" data-cid="n298">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn299" data-cid="n299">
+                      <div class="cn300" data-cid="n300">
+                        <h2 class="cn301" data-cid="n301">
+                          Voice
+                        </h2>
+                      </div>
+                      <div class="cn302" data-cid="n302">
+                        <a class="cn303" data-cid="n303" href="https://superagi.com/market/business-receptionist">
+                          <div class="cn304" data-cid="n304">
+                            <img class="cn305" data-cid="n305" alt="AI Business Receptionist" src="public/assets/cloned/images/b31f0f7e6ee1.jpg" />
+                            <div class="cn306" data-cid="n306">
+                              <div class="cn307" data-cid="n307">
+                                <h3 class="cn308" data-cid="n308">
+                                  AI Business Receptionist
+                                </h3>
+                              </div>
+                              <p class="cn309" data-cid="n309">
+                                AI receptionist that answers calls, qualifies callers, and books meetings—24/7.
+                              </p>
+                            </div>
+                            <div class="cn310" data-cid="n310" type="button">
+                              <span class="cn311" data-cid="n311">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn312" data-cid="n312" href="https://superagi.com/market/voice_agents">
+                          <div class="cn313" data-cid="n313">
+                            <img class="cn314" data-cid="n314" alt="Voice Agents" src="public/assets/cloned/images/88cb9f91025a.jpg" />
+                            <div class="cn315" data-cid="n315">
+                              <div class="cn316" data-cid="n316">
+                                <h3 class="cn317" data-cid="n317">
+                                  Voice Agents
+                                </h3>
+                              </div>
+                              <p class="cn318" data-cid="n318">
+                                Natural-sounding AI voice agents that answer, qualify, resolve, and schedule—24/7 and at scale.
+                              </p>
+                            </div>
+                            <div class="cn319" data-cid="n319" type="button">
+                              <span class="cn320" data-cid="n320">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn321" data-cid="n321">
+                      <div class="cn322" data-cid="n322">
+                        <h2 class="cn323" data-cid="n323">
+                          Channels
+                        </h2>
+                      </div>
+                      <div class="cn324" data-cid="n324">
+                        <a class="cn325" data-cid="n325" href="https://superagi.com/market/whatsapp">
+                          <div class="cn326" data-cid="n326">
+                            <img class="cn327" data-cid="n327" alt="WhatsApp" src="public/assets/cloned/images/af7eb6d1c0dc.jpg" />
+                            <div class="cn328" data-cid="n328">
+                              <div class="cn329" data-cid="n329">
+                                <h3 class="cn330" data-cid="n330">
+                                  WhatsApp
+                                </h3>
+                              </div>
+                              <p class="cn331" data-cid="n331">
+                                Connect and engage with your customers on WhatsApp
+                              </p>
+                            </div>
+                            <div class="cn332" data-cid="n332" type="button">
+                              <span class="cn333" data-cid="n333">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn334" data-cid="n334">
+                      <div class="cn335" data-cid="n335">
+                        <h2 class="cn336" data-cid="n336">
+                          HR
+                        </h2>
+                      </div>
+                      <div class="cn337" data-cid="n337">
+                        <a class="cn338" data-cid="n338" href="https://superagi.com/market/attendance">
+                          <div class="cn339" data-cid="n339">
+                            <img class="cn340" data-cid="n340" alt="Attendance" src="public/assets/cloned/svg/b66b096368d0.svg" />
+                            <div class="cn341" data-cid="n341">
+                              <div class="cn342" data-cid="n342">
+                                <h3 class="cn343" data-cid="n343">
+                                  Attendance
+                                </h3>
+                              </div>
+                              <p class="cn344" data-cid="n344">
+                                Track employee check-ins, check-outs, and attendance records in real time.
+                              </p>
+                            </div>
+                            <div class="cn345" data-cid="n345" type="button">
+                              <span class="cn346" data-cid="n346">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn347" data-cid="n347" href="https://superagi.com/market/approvals">
+                          <div class="cn348" data-cid="n348">
+                            <img class="cn349" data-cid="n349" alt="Approvals" src="public/assets/cloned/images/274b7f6f40f9.jpg" />
+                            <div class="cn350" data-cid="n350">
+                              <div class="cn351" data-cid="n351">
+                                <h3 class="cn352" data-cid="n352">
+                                  Approvals
+                                </h3>
+                              </div>
+                              <p class="cn353" data-cid="n353">
+                                Manage approval requests for leave, expenses, onboarding, requisitions, and OKR reviews.
+                              </p>
+                            </div>
+                            <div class="cn354" data-cid="n354" type="button">
+                              <span class="cn355" data-cid="n355">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn356" data-cid="n356" href="https://superagi.com/market/people">
+                          <div class="cn357" data-cid="n357">
+                            <img class="cn358" data-cid="n358" alt="People" src="public/assets/cloned/svg/61e2879488cc.svg" />
+                            <div class="cn359" data-cid="n359">
+                              <div class="cn360" data-cid="n360">
+                                <h3 class="cn361" data-cid="n361">
+                                  People
+                                </h3>
+                              </div>
+                              <p class="cn362" data-cid="n362">
+                                Manage your workforce — employees, departments, teams, roles, and onboarding — in one place.
+                              </p>
+                            </div>
+                            <div class="cn363" data-cid="n363" type="button">
+                              <span class="cn364" data-cid="n364">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn365" data-cid="n365" href="https://superagi.com/market/time-off">
+                          <div class="cn366" data-cid="n366">
+                            <img class="cn367" data-cid="n367" alt="Time Off" src="public/assets/cloned/svg/bf0b351a1bb7.svg" />
+                            <div class="cn368" data-cid="n368">
+                              <div class="cn369" data-cid="n369">
+                                <h3 class="cn370" data-cid="n370">
+                                  Time Off
+                                </h3>
+                              </div>
+                              <p class="cn371" data-cid="n371">
+                                Streamline time-off management with requests, approvals, leave tracking, and holiday calendars.
+                              </p>
+                            </div>
+                            <div class="cn372" data-cid="n372" type="button">
+                              <span class="cn373" data-cid="n373">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn374" data-cid="n374" href="https://superagi.com/market/ats">
+                          <div class="cn375" data-cid="n375">
+                            <img class="cn376" data-cid="n376" alt="ATS" src="public/assets/cloned/svg/be92fe647f32.svg" />
+                            <div class="cn377" data-cid="n377">
+                              <div class="cn378" data-cid="n378">
+                                <h3 class="cn379" data-cid="n379">
+                                  ATS
+                                </h3>
+                              </div>
+                              <p class="cn380" data-cid="n380">
+                                Track candidates from application to hire with a fully integrated applicant tracking system.
+                              </p>
+                            </div>
+                            <div class="cn381" data-cid="n381" type="button">
+                              <span class="cn382" data-cid="n382">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn383" data-cid="n383" href="https://superagi.com/market/perform">
+                          <div class="cn384" data-cid="n384">
+                            <img class="cn385" data-cid="n385" alt="Performance" src="public/assets/cloned/svg/5cf5ef7636e9.svg" />
+                            <div class="cn386" data-cid="n386">
+                              <div class="cn387" data-cid="n387">
+                                <h3 class="cn388" data-cid="n388">
+                                  Performance
+                                </h3>
+                              </div>
+                              <p class="cn389" data-cid="n389">
+                                Drive performance with OKRs, goals, and tracking in one place.
+                              </p>
+                            </div>
+                            <div class="cn390" data-cid="n390" type="button">
+                              <span class="cn391" data-cid="n391">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn392" data-cid="n392">
+                      <div class="cn393" data-cid="n393">
+                        <h2 class="cn394" data-cid="n394">
+                          Downloadable Apps
+                        </h2>
+                      </div>
+                      <div class="cn395" data-cid="n395">
+                        <a class="cn396" data-cid="n396" href="https://superagi.com/market/android-app">
+                          <div class="cn397" data-cid="n397">
+                            <img class="cn398" data-cid="n398" alt="Android Mobile App" src="public/assets/cloned/images/ab168591d23c.jpg" />
+                            <div class="cn399" data-cid="n399">
+                              <div class="cn400" data-cid="n400">
+                                <h3 class="cn401" data-cid="n401">
+                                  Android Mobile App
+                                </h3>
+                              </div>
+                              <p class="cn402" data-cid="n402">
+                                SuperAGI android app to manage contacts, companies, deals, conversations, calls and tasks with built-in analytics and account intelligence to track performance on the go.
+                              </p>
+                            </div>
+                            <div class="cn403" data-cid="n403" type="button">
+                              <span class="cn404" data-cid="n404">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                        <a class="cn405" data-cid="n405" href="https://superagi.com/market/ios-app">
+                          <div class="cn406" data-cid="n406">
+                            <img class="cn407" data-cid="n407" alt="iOS Mobile App" src="public/assets/cloned/images/81ac23a6b19b.jpg" />
+                            <div class="cn408" data-cid="n408">
+                              <div class="cn409" data-cid="n409">
+                                <h3 class="cn410" data-cid="n410">
+                                  iOS Mobile App
+                                </h3>
+                              </div>
+                              <p class="cn411" data-cid="n411">
+                                SuperAGI IoS app to manage contacts, companies, deals, conversations, calls, and tasks in one place, with built-in analytics and account intelligence to track performance on the go.
+                              </p>
+                            </div>
+                            <div class="cn412" data-cid="n412" type="button">
+                              <span class="cn413" data-cid="n413">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="cn414" data-cid="n414">
+                      <div class="cn415" data-cid="n415">
+                        <h2 class="cn416" data-cid="n416">
+                          Legal
+                        </h2>
+                      </div>
+                      <div class="cn417" data-cid="n417">
+                        <a class="cn418" data-cid="n418" href="https://superagi.com/market/esign">
+                          <div class="cn419" data-cid="n419">
+                            <img class="cn420" data-cid="n420" alt="E-Sign" src="public/assets/cloned/svg/4d5ab4a045b7.svg" />
+                            <div class="cn421" data-cid="n421">
+                              <div class="cn422" data-cid="n422">
+                                <h3 class="cn423" data-cid="n423">
+                                  E-Sign
+                                </h3>
+                              </div>
+                              <p class="cn424" data-cid="n424">
+                                Send, sign, and manage legally binding documents and contracts electronically—no printing required.
+                              </p>
+                            </div>
+                            <div class="cn425" data-cid="n425" type="button">
+                              <span class="cn426" data-cid="n426">
+                                Install
+                              </span>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <footer class="cn427" data-cid="n427">
+                <div class="cn428" data-cid="n428">
+                  <p class="cn429" data-cid="n429">
+                     Trusted By 50,000+ Customers Across The World 
+                  </p>
+                  <div class="cn430" data-cid="n430">
+                    <img class="cn431" data-cid="n431" alt="Firecrawl" src="public/assets/cloned/svg/aeca0f983a0d.svg" />
+                    <img class="cn432" data-cid="n432" alt="Agora" src="public/assets/cloned/svg/930b6428d696.svg" />
+                    <img class="cn433" data-cid="n433" alt="SpatialChat" src="public/assets/cloned/svg/1538df497717.svg" />
+                    <img class="cn434" data-cid="n434" alt="MediBuddy" src="public/assets/cloned/svg/51ab5e36faa4.svg" />
+                    <img class="cn435" data-cid="n435" alt="Google" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                    <img class="cn436" data-cid="n436" alt="AYR Energy" src="public/assets/cloned/svg/6f572fb086f4.svg" />
+                    <img class="cn437" data-cid="n437" alt="Ansys" src="public/assets/cloned/svg/6e3309e77ec9.svg" />
+                    <img class="cn438" data-cid="n438" alt="VEEBA" src="public/assets/cloned/svg/3a50e60db212.svg" />
+                    <img class="cn439" data-cid="n439" alt="TestMu AI" src="public/assets/cloned/svg/9486947da106.svg" />
+                    <img class="cn440" data-cid="n440" alt="AppSentinels" src="public/assets/cloned/svg/7af464074a68.svg" />
+                    <img class="cn441" data-cid="n441" alt="Glider" src="public/assets/cloned/svg/0fea40c2c077.svg" />
+                  </div>
+                </div>
+                <div class="cn442" data-cid="n442">
+                  <span class="cn443" data-cid="n443">
+                    Copyright © 2026 | SuperAGI.
+                  </span>
+                  <span class="cn444" data-cid="n444">
+                    |
+                  </span>
+                  <span class="cn445" data-cid="n445">
+                    SuperAGI is a product of Contlo INC.
+                  </span>
+                  <span class="cn446" data-cid="n446">
+                    |
+                  </span>
+                  <a class="cn447" data-cid="n447" href="https://superagi.com/terms">
+                     Terms of Usage 
+                  </a>
+                  <span class="cn448" data-cid="n448">
+                    |
+                  </span>
+                  <a class="cn449" data-cid="n449" href="https://superagi.com/privacy-policy">
+                     Privacy Policy 
+                  </a>
+                  <span class="cn450" data-cid="n450">
+                    |
+                  </span>
+                  <span class="cn451" data-cid="n451">
+                    Call us at +1 (302) 599-6365
+                  </span>
+                </div>
+              </footer>
+            </div>
+          </div>
+        </div>
+      </body>
+    </div>
+     
+</body>
+</html>
