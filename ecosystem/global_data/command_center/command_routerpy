@@ -1,0 +1,25 @@
+class CommandRouter:
+    def __init__(self, global_data, mission_router):
+        self.global_data = global_data
+        self.mission_router = mission_router
+        self.logs = global_data["logs"]
+
+    def route(self, packet_dict):
+        division = packet_dict["division"]
+
+        ok, msg = self.mission_router.route(packet_dict)
+
+        if not ok:
+            self.log_error(f"Routing failed: {msg}")
+            return False, msg
+
+        self.log_command(f"Command Center routed mission {packet_dict['mission_id']} to {division}")
+        return True, msg
+
+    def log_command(self, text):
+        with open(self.logs["missions"], "a") as f:
+            f.write(f"[COMMAND] {text}\n")
+
+    def log_error(self, text):
+        with open(self.logs["errors"], "a") as f:
+            f.write(f"[ERROR] {text}\n")

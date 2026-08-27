@@ -1,0 +1,17 @@
+{
+    "datasets": {
+        "patterns": "ecosystem/data/patterns/",
+        "intel_cache": "ecosystem/data/intel_cache/",
+        "mission_templates": "ecosystem/data/mission_templates/"
+    },
+
+    "limits": {
+        "max_packet_size": 2048,
+        "max_history_entries": 5000
+    },
+
+    "shared_flags": {
+        "maintenance_mode": false,
+        "global_lock": false
+    }
+}

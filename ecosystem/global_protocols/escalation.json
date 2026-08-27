@@ -1,0 +1,20 @@
+{
+    "levels": [
+        "agent",
+        "division",
+        "command_center",
+        "global"
+    ],
+
+    "rules": {
+        "agent_failure": "escalate_to_division",
+        "division_failure": "escalate_to_command_center",
+        "command_center_failure": "escalate_to_global"
+    },
+
+    "global_actions": [
+        "halt_mission_flow",
+        "trigger_global_log",
+        "notify_admin"
+    ]
+}

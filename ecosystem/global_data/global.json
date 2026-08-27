@@ -1,0 +1,96 @@
+{
+    "system": {
+        "name": "orchid",
+        "version": "3.0"
+    },
+
+    "divisions": {
+        "intelligence_profiles": {
+            "ops_division": {
+                "personality": "aggressive",
+                "specialization": "tactics",
+                "skills": {
+                    "tactics": 5,
+                    "analysis": 2,
+                    "scanning": 1,
+                    "triage": 1
+                }
+            },
+            "intel_division": {
+                "personality": "analytical",
+                "specialization": "analysis",
+                "skills": {
+                    "tactics": 1,
+                    "analysis": 5,
+                    "scanning": 3,
+                    "triage": 1
+                }
+            },
+            "recon_division": {
+                "personality": "cautious",
+                "specialization": "scanning",
+                "skills": {
+                    "tactics": 2,
+                    "analysis": 3,
+                    "scanning": 5,
+                    "triage": 1
+                }
+            },
+            "medic_division": {
+                "personality": "calm",
+                "specialization": "triage",
+                "skills": {
+                    "tactics": 1,
+                    "analysis": 2,
+                    "scanning": 1,
+                    "triage": 5
+                }
+            }
+        }
+    },
+
+    "agents": {
+        "cmdr_max80": {
+            "role": "commander",
+            "priority": 1,
+            "personality": "strategic",
+            "specialization": "combat",
+            "skills": {
+                "combat": 5,
+                "recon": 3,
+                "intel": 2,
+                "medical": 1
+            }
+        },
+        "grunt_X": {
+            "role": "field_agent",
+            "priority": 2,
+            "personality": "aggressive",
+            "specialization": "combat",
+            "skills": {
+                "combat": 4,
+                "recon": 2,
+                "intel": 1,
+                "medical": 1
+            }
+        },
+        "cpt_eco": {
+            "role": "support",
+            "priority": 3,
+            "personality": "calm",
+            "specialization": "medic",
+            "skills": {
+                "combat": 1,
+                "recon": 2,
+                "intel": 3,
+                "medical": 5
+            }
+        }
+    },
+
+    "logs": {
+        "agents": "/data/data/com.termux/files/home/eco.prv16.3/ecosystem/logs/agents.log",
+        "divisions": "/data/data/com.termux/files/home/eco.prv16.3/ecosystem/logs/divisions.log",
+        "system": "/data/data/com.termux/files/home/eco.prv16.3/ecosystem/logs/system.log"
+    }
+}

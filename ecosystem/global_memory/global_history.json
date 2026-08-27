@@ -1,0 +1,9 @@
+{
+    "events": [],
+    "last_reset": "init",
+    "log_rules": {
+        "store_agent_events": true,
+        "store_division_events": true,
+        "store_global_events": true
+    }
+}

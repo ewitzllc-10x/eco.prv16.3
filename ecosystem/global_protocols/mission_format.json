@@ -1,0 +1,22 @@
+{
+    "required_fields": [
+        "mission_id",
+        "origin",
+        "division",
+        "tier_required",
+        "payload"
+    ],
+
+    "field_rules": {
+        "mission_id": "string",
+        "origin": "string",
+        "division": "string",
+        "tier_required": "string",
+        "payload": "object"
+    },
+
+    "validation": {
+        "checksum_required": true,
+        "timestamp_required": true
+    }
+}

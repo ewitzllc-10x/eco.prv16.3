@@ -1,0 +1,31 @@
+{
+    "operations": {
+        "auth_level": 3,
+        "can_dispatch": true,
+        "can_modify_packets": false
+    },
+
+    "intel_division": {
+        "auth_level": 2,
+        "can_dispatch": false,
+        "can_modify_packets": false
+    },
+
+    "recon_division": {
+        "auth_level": 2,
+        "can_dispatch": false,
+        "can_modify_packets": false
+    },
+
+    "medic": {
+        "auth_level": 1,
+        "can_dispatch": false,
+        "can_modify_packets": false
+    },
+
+    "platoon": {
+        "auth_level": 1,
+        "can_dispatch": false,
+        "can_modify_packets": false
+    }
+}

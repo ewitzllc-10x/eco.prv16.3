@@ -1,0 +1,18 @@
+{
+    "packet_structure": {
+        "header": ["id", "timestamp", "division"],
+        "body": ["mission_type", "payload"],
+        "footer": ["checksum"]
+    },
+
+    "allowed_channels": [
+        "mission_router",
+        "division_dispatcher",
+        "agent_direct"
+    ],
+
+    "forbidden_channels": [
+        "cross_division_direct",
+        "unverified_external"
+    ]
+}

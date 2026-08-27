@@ -1,0 +1,17 @@
+{
+    "world_name": "Orchid",
+    "status": "operational",
+    "active_divisions": [
+        "operations",
+        "intel_division",
+        "recon_division",
+        "medic",
+        "platoon"
+    ],
+    "mission_flow": {
+        "router_online": true,
+        "dispatcher_online": true,
+        "inbox_queue": 0
+    },
+    "timestamp": "init"
+}
