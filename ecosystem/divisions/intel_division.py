@@ -1,19 +1,15 @@
 from divisions.base_division import BaseDivision
 
-class IntelDivision(BaseDivision):
+class IntelDivision:
     def __init__(self, global_data):
-        super().__init__("intel_division", global_data)
+        self.global_data = global_data
 
-    def classify_intel(self, payload):
-        """Determine intel category."""
-        if "source" in payload:
-            src = payload["source"]
-            if src in ["drone", "satellite"]:
-                return "aerial"
-            if src in ["agent", "field_report"]:
-                return "human"
-        return "unknown"
+    def execute(self, packet):
+        mission_id = packet["mission_id"]
+        payload = packet["payload"]
+        mission_type = payload.get("type", "")
 
+        return f"[intel_division] Intel analyzing mission {mission_id} (type={mission_type})"
     def detect_patterns(self, payload):
         """Look for patterns in intel data."""
         patterns = []

@@ -1,25 +1,15 @@
 from divisions.base_division import BaseDivision
 
-class ReconDivision(BaseDivision):
+class ReconDivision:
     def __init__(self, global_data):
-        super().__init__("recon_division", global_data)
+        self.global_data = global_data
 
-    def scan_area(self, payload):
-        """Simulate recon scanning logic."""
-        results = []
+    def execute(self, packet):
+        mission_id = packet["mission_id"]
+        payload = packet["payload"]
+        mission_type = payload.get("type", "")
 
-        if payload.get("terrain") == "urban":
-            results.append("multiple vantage points identified")
-        elif payload.get("terrain") == "forest":
-            results.append("dense cover detected")
-        elif payload.get("terrain") == "desert":
-            results.append("open terrain, minimal cover")
-
-        if payload.get("heat_signatures", 0) > 0:
-            results.append(f"{payload['heat_signatures']} heat signatures detected")
-
-        return results
-
+        return f"[recon_division] Recon performing mission {mission_id} (type={mission_type})"
     def detect_hostiles(self, payload):
         """Hostile detection logic."""
         hostiles = payload.get("hostiles", 0)

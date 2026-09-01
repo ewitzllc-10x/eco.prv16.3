@@ -1,0 +1,14 @@
+def process(self, packet):
+        ok, msg = self.validator.validate(packet)
+        if not ok:
+            return False, msg
+
+        division = packet["division"]
+        division_result = self.divisions[division].execute(packet)
+
+        threat_score = packet["payload"].get("threat_level", 0)
+        agent_name = self.select_agent(threat_score)
+        agent = self.agents[agent_name]
+        agent_result = agent.act(packet)
+
+        return True, f"{division_result} | {agent_result}"

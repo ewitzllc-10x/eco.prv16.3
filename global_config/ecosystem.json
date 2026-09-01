@@ -1,0 +1,40 @@
+{
+    "world_name": "Orchid",
+    "version": "1.0.0",
+    "root_path": "eco.prv16.3/ecosystem",
+    "divisions": [
+        "operations",
+        "intel_divusion",
+        "recon_division",
+        "medic",
+        "platoon"
+    ]
+}
+{
+    "os": "Termux",
+    "python_version": "3.11",
+    "paths": {
+        "missions": "ecosystem/missions",
+        "command_center": "ecosystem/command_center",
+        "divisions": "ecosystem/divisions",
+        "global": "ecosystem/global"
+    }
+}
+{
+    "forbidden_actions": [
+        "cross_division_tool_access",
+        "unauthorized_escalation",
+        "packet_modification",
+        "credential_override"
+    ],
+    "logging": {
+        "security": true,
+        "errors": true
+    }
+}
+{
+    "default_tier": "LTD-1",
+    "default_auth_level": 1,
+    "default_priority": "low",
+    "default_agent_status": "idle"
+}

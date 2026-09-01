@@ -1,4 +1,4 @@
-class OpsDivision:
+class MedicDivision:
     def __init__(self, global_data):
         self.global_data = global_data
 
@@ -6,6 +6,5 @@ class OpsDivision:
         mission_id = packet["mission_id"]
         payload = packet["payload"]
         mission_type = payload.get("type", "")
-        threat = payload.get("threat_level", 0)
 
-        return f"[ops_division] Ops executing mission {mission_id} (type={mission_type}, threat={threat})"
+        return f"[medic_division] Medic responding to mission {mission_id} (type={mission_type})"

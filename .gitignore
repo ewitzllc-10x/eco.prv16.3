@@ -1,40 +1,7 @@
-# LEGACY GHOSTS - never again
-# Legacy
-# Python
-# Python cache
-# Runtime
-# Vaults
-# Vaults - secure data
-# eco_ignore - master ignore for eco.prv16.3
-**/*.binary
-**/core.binary
-**/ram_store.json
-*.log
-*.pyc
-*.pyo
-*.tar.gz
-*.zip
-.DS_Store
 .env
-Max80/
-__pycache__/
-_archive/
-agentenv/
-ars_vault/*
-ars_vault/edata_vault.db
-cbm/
-core
-ecosystem/elogs/
-ecosystem_core/
-ecosystem_core_v3_archived_20260726/
-edata_vault/*.db
-edata_vault/*.db-journal
-latest.html
-logs/
-m8.dna.core.binary
+SOVEREIGNTY.txt
+*.tar.gz
+*.gpg
+m8env/
+Max80/m8env/
 max80/backend/m8env/
-mcp.log
-mcp_max80/
-memory_store.json
-ram_store.json
-vault/
